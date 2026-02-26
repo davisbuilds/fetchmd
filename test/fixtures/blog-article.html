@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><title>How to Build a CLI Tool</title></head>
+<body>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/blog">Blog</a>
+    <a href="/about">About</a>
+  </nav>
+  <div class="ad-banner">Sponsored: Buy widgets now!</div>
+  <main>
+    <article>
+      <h1>How to Build a CLI Tool</h1>
+      <p class="meta">Published on 2026-01-15 by Jane Doe</p>
+      <p>Building a command-line tool is one of the most rewarding projects for a developer. In this guide, we'll walk through the key steps.</p>
+      <h2>Step 1: Choose Your Language</h2>
+      <p>TypeScript with Node.js provides an excellent developer experience. The type system catches errors early, and npm makes distribution easy.</p>
+      <h2>Step 2: Define Your Interface</h2>
+      <p>A good CLI should be intuitive. Use positional arguments for the most common input and flags for options.</p>
+      <pre><code class="language-typescript">import { Command } from "commander";
+const program = new Command();
+program.argument("[url]").parse();</code></pre>
+      <h2>Step 3: Handle Errors Gracefully</h2>
+      <p>Always write errors to stderr and exit with appropriate codes. This makes your tool composable in Unix pipelines.</p>
+      <p>Remember that good error messages save users time. Be specific about what went wrong and suggest fixes.</p>
+      <p>Testing error paths is just as important as testing the happy path. Cover edge cases thoroughly.</p>
+    </article>
+  </main>
+  <aside>
+    <h3>Related Posts</h3>
+    <ul>
+      <li><a href="/post/2">Another post</a></li>
+      <li><a href="/post/3">Yet another</a></li>
+    </ul>
+  </aside>
+  <footer>
+    <p>&copy; 2026 Example Blog. All rights reserved.</p>
+    <nav><a href="/privacy">Privacy</a> | <a href="/terms">Terms</a></nav>
+  </footer>
+</body>
+</html>

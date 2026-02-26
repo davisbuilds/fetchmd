@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><title>API Reference - fetchmd</title></head>
+<body>
+  <nav class="sidebar">
+    <ul>
+      <li><a href="#install">Installation</a></li>
+      <li><a href="#usage">Usage</a></li>
+      <li><a href="#api">API</a></li>
+    </ul>
+  </nav>
+  <main>
+    <article>
+      <h1>API Reference</h1>
+      <p>This page documents the fetchmd API for programmatic usage.</p>
+      <h2 id="install">Installation</h2>
+      <p>Install via npm:</p>
+      <pre><code class="language-bash">npm install -g fetchmd</code></pre>
+      <h2 id="usage">Usage</h2>
+      <p>The simplest usage is to pass a URL as the first argument:</p>
+      <pre><code class="language-bash">fetchmd https://example.com</code></pre>
+      <p>You can also pipe HTML from stdin or read from a local file.</p>
+      <h2 id="api">Programmatic API</h2>
+      <p>Import the pipeline function for use in your own tools:</p>
+      <pre><code class="language-typescript">import { run } from "fetchmd/pipeline";
+await run(["node", "fetchmd", "https://example.com"], true);</code></pre>
+      <p>The pipeline function accepts injectable dependencies for testing purposes.</p>
+      <p>Each module can also be imported individually for custom workflows.</p>
+    </article>
+  </main>
+</body>
+</html>

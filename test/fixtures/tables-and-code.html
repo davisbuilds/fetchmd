@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><title>Comparison Table</title></head>
+<body>
+  <article>
+    <h1>Tool Comparison</h1>
+    <p>Here is a comparison of different approaches:</p>
+    <table>
+      <thead>
+        <tr><th>Feature</th><th>fetchmd</th><th>Jina Reader</th><th>Firecrawl</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Local-first</td><td>Yes</td><td>No</td><td>No</td></tr>
+        <tr><td>Free</td><td>Yes</td><td>Freemium</td><td>Paid</td></tr>
+        <tr><td>JS Rendering</td><td>No (v1)</td><td>Yes</td><td>Yes</td></tr>
+      </tbody>
+    </table>
+    <h2>Code Example</h2>
+    <p>Here is how you use fetchmd in a pipeline:</p>
+    <pre><code class="language-bash">curl -s https://example.com | fetchmd | llm "summarize this"</code></pre>
+    <p>And a TypeScript example:</p>
+    <pre><code class="language-ts">const html = await fetch(url).then(r => r.text());
+const md = toMarkdown(extractContent(html).content);</code></pre>
+    <p>This demonstrates the composable nature of the tool and its modular architecture.</p>
+    <p>Each function is independently testable and can be used in isolation.</p>
+  </article>
+</body>
+</html>
