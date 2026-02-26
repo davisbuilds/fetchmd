@@ -79,6 +79,17 @@ describe("e2e: stdin mode", () => {
   });
 });
 
+describe("e2e: --raw mode", () => {
+  it("includes boilerplate that Readability would strip", async () => {
+    const { stdout, code } = await run(["--raw", "--file", `${FIXTURES}/blog-article.html`]);
+    expect(code).toBe(0);
+    expect(stdout).toContain("How to Build a CLI Tool");
+    // Raw mode preserves nav/footer content that Readability strips
+    expect(stdout).toContain("Home");
+    expect(stdout).toContain("All rights reserved");
+  });
+});
+
 describe("e2e: error cases", () => {
   it("errors on nonexistent file", async () => {
     const { stderr, code } = await run(["--file", "/nonexistent/path.html"]);

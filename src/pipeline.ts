@@ -19,7 +19,7 @@ export async function run(
   const stdout = options?.stdout ?? process.stdout;
   const _stderr = options?.stderr ?? process.stderr;
 
-  const { input } = parseArgs(argv, isTTY);
+  const { input, raw } = parseArgs(argv, isTTY);
 
   const inputOpts: InputOptions = {
     fetch: options?.fetch,
@@ -28,17 +28,14 @@ export async function run(
 
   const html = await resolveInput(input, inputOpts);
 
-  const urlHint = input.mode === "url" ? input.value : undefined;
-  const extracted = extractContent(html, urlHint);
-
-  const markdown = toMarkdown(extracted.content);
-
-  // Prepend title as H1 if available
   let output: string;
-  if (extracted.title) {
-    output = `# ${extracted.title}\n\n${markdown}`;
+  if (raw) {
+    output = toMarkdown(html);
   } else {
-    output = markdown;
+    const urlHint = input.mode === "url" ? input.value : undefined;
+    const extracted = extractContent(html, urlHint);
+    const markdown = toMarkdown(extracted.content);
+    output = extracted.title ? `# ${extracted.title}\n\n${markdown}` : markdown;
   }
 
   stdout.write(output);

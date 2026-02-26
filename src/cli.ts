@@ -11,6 +11,7 @@ export type InputMode =
 
 export interface CliResult {
   input: InputMode;
+  raw: boolean;
 }
 
 export function createProgram(): Command {
@@ -22,6 +23,7 @@ export function createProgram(): Command {
     .version(pkg.version)
     .argument("[url]", "URL to fetch and convert to markdown")
     .option("-f, --file <path>", "read HTML from a local file")
+    .option("-r, --raw", "skip content extraction, convert full HTML")
     .addHelpText(
       "after",
       `
@@ -57,5 +59,5 @@ export function parseArgs(argv: string[], isTTY: boolean): CliResult {
     );
   }
 
-  return { input: modes[0] };
+  return { input: modes[0], raw: !!program.opts().raw };
 }

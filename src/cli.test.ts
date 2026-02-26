@@ -28,4 +28,14 @@ describe("parseArgs", () => {
       parseArgs([...node, "https://example.com", "--file", "page.html"], true),
     ).toThrow();
   });
+
+  it("parses --raw flag", () => {
+    const result = parseArgs([...node, "--raw", "https://example.com"], true);
+    expect(result.raw).toBe(true);
+  });
+
+  it("defaults raw to false", () => {
+    const result = parseArgs([...node, "https://example.com"], true);
+    expect(result.raw).toBe(false);
+  });
 });
