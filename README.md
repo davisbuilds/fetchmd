@@ -49,6 +49,15 @@ Output goes to stdout. Errors go to stderr. Designed for Unix pipelines.
 | 0 | Success |
 | 1 | Error (details on stderr) |
 
+## Documentation
+
+- Agent guidance: [AGENTS.md](AGENTS.md)
+- Architecture: [docs/system/ARCHITECTURE.md](docs/system/ARCHITECTURE.md)
+- Features and CLI behavior: [docs/system/FEATURES.md](docs/system/FEATURES.md)
+- Operations and release workflow: [docs/system/OPERATIONS.md](docs/system/OPERATIONS.md)
+- Roadmap: [docs/project/ROADMAP.md](docs/project/ROADMAP.md)
+- Git history and branch hygiene: [docs/project/GIT_HISTORY_POLICY.md](docs/project/GIT_HISTORY_POLICY.md)
+
 ## License
 
 MIT
