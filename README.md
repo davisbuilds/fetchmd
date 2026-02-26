@@ -22,6 +22,12 @@ fetchmd --file page.html
 # Pipe HTML from stdin
 curl -s https://example.com | fetchmd
 
+# Skip content extraction, convert full HTML
+fetchmd --raw https://example.com
+
+# Show word count, token estimate, and output size
+fetchmd --stats https://example.com
+
 # Compose with other tools
 curl -s https://example.com | fetchmd | llm "summarize this"
 ```

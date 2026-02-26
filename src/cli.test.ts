@@ -38,4 +38,14 @@ describe("parseArgs", () => {
     const result = parseArgs([...node, "https://example.com"], true);
     expect(result.raw).toBe(false);
   });
+
+  it("parses --stats flag", () => {
+    const result = parseArgs([...node, "--stats", "https://example.com"], true);
+    expect(result.stats).toBe(true);
+  });
+
+  it("defaults stats to false", () => {
+    const result = parseArgs([...node, "https://example.com"], true);
+    expect(result.stats).toBe(false);
+  });
 });

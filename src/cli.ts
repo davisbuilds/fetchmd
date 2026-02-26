@@ -12,6 +12,7 @@ export type InputMode =
 export interface CliResult {
   input: InputMode;
   raw: boolean;
+  stats: boolean;
 }
 
 export function createProgram(): Command {
@@ -24,6 +25,7 @@ export function createProgram(): Command {
     .argument("[url]", "URL to fetch and convert to markdown")
     .option("-f, --file <path>", "read HTML from a local file")
     .option("-r, --raw", "skip content extraction, convert full HTML")
+    .option("-s, --stats", "print word count, token estimate, and size to stderr")
     .addHelpText(
       "after",
       `
@@ -59,5 +61,5 @@ export function parseArgs(argv: string[], isTTY: boolean): CliResult {
     );
   }
 
-  return { input: modes[0], raw: !!program.opts().raw };
+  return { input: modes[0], raw: !!program.opts().raw, stats: !!program.opts().stats };
 }

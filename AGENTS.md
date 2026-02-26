@@ -40,6 +40,7 @@ node dist/index.js --file test/fixtures/article.html
 | Input resolution for URL/file/stdin | `src/input.ts` |
 | Readability extraction | `src/extract.ts` |
 | Markdown conversion rules | `src/convert.ts` |
+| Word count, token estimation, output size | `src/stats.ts` |
 | Unit tests | `src/*.test.ts` |
 | E2E tests and fixtures | `test/e2e.test.ts`, `test/fixtures/` |
 

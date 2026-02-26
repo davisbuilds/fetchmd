@@ -22,6 +22,8 @@ curl -s https://example.com | fetchmd
 ### Flags
 
 - `-f, --file <path>`: read HTML from local file
+- `-r, --raw`: skip Readability extraction, convert full HTML to markdown
+- `-s, --stats`: print word count, estimated token count, and output size to stderr
 - `-h, --help`: usage and examples
 - `-V, --version`: package version
 

@@ -90,6 +90,27 @@ describe("e2e: --raw mode", () => {
   });
 });
 
+describe("e2e: --stats mode", () => {
+  it("prints stats to stderr", async () => {
+    const { stdout, stderr, code } = await run([
+      "--stats",
+      "--file",
+      `${FIXTURES}/blog-article.html`,
+    ]);
+    expect(code).toBe(0);
+    expect(stdout).toContain("# How to Build a CLI Tool");
+    expect(stderr).toMatch(/\d[\d,]* words/);
+    expect(stderr).toMatch(/~[\d,]+ tokens/);
+    expect(stderr).toMatch(/[\d.]+ KB markdown/);
+  });
+
+  it("does not print stats without --stats flag", async () => {
+    const { stderr, code } = await run(["--file", `${FIXTURES}/blog-article.html`]);
+    expect(code).toBe(0);
+    expect(stderr).not.toContain("tokens");
+  });
+});
+
 describe("e2e: error cases", () => {
   it("errors on nonexistent file", async () => {
     const { stderr, code } = await run(["--file", "/nonexistent/path.html"]);

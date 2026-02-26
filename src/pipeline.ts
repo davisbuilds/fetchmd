@@ -3,6 +3,7 @@ import { parseArgs } from "./cli.js";
 import { toMarkdown } from "./convert.js";
 import { extractContent } from "./extract.js";
 import { type InputOptions, resolveInput } from "./input.js";
+import { computeStats, formatStats } from "./stats.js";
 
 export interface PipelineOptions {
   fetch?: typeof globalThis.fetch;
@@ -17,9 +18,9 @@ export async function run(
   options?: PipelineOptions,
 ): Promise<void> {
   const stdout = options?.stdout ?? process.stdout;
-  const _stderr = options?.stderr ?? process.stderr;
+  const stderr = options?.stderr ?? process.stderr;
 
-  const { input, raw } = parseArgs(argv, isTTY);
+  const { input, raw, stats } = parseArgs(argv, isTTY);
 
   const inputOpts: InputOptions = {
     fetch: options?.fetch,
@@ -39,4 +40,8 @@ export async function run(
   }
 
   stdout.write(output);
+
+  if (stats) {
+    stderr.write(`${formatStats(computeStats(output))}\n`);
+  }
 }
