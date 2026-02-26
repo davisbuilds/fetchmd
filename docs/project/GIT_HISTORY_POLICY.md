@@ -2,9 +2,30 @@
 
 Last updated: February 26, 2026
 
+## Repository Merge Settings
+
+Configured on GitHub repository `davisbuilds/fetchmd`:
+
+- `allow_squash_merge`: `true`
+- `allow_merge_commit`: `false`
+- `allow_rebase_merge`: `false`
+- `delete_branch_on_merge`: `true`
+- `squash_merge_commit_title`: `PR_TITLE`
+- `squash_merge_commit_message`: `PR_BODY`
+
+Result:
+
+- PR branches can contain multiple commits.
+- `main` receives one squashed commit per merged PR.
+- Merged remote branches are auto-deleted.
+
 ## Merge Strategy
 
-Preferred strategy: squash merge to keep `main` history concise and review-oriented.
+Squash-merge only. Merge commits and rebase merges are disabled at the repository level.
+
+## Branch Protection Status
+
+`main` branch protection is currently not enabled on GitHub, so required checks/reviews are enforced by team convention rather than branch rules.
 
 ## Branch Workflow
 
