@@ -11,16 +11,19 @@ This roadmap is a lightweight planning snapshot, not a release contract.
 - Content extraction with Readability and fallback strategy
 - Markdown conversion with GFM support and cleanup rules
 - Unit and end-to-end test coverage across parsing, security, fetching, extraction, and conversion
+- `--raw` mode (skip Readability and convert full HTML)
+- `--stats` flag (word count, token estimate, output size to stderr)
+- `--json` structured output (metadata + markdown + stats)
+- Multi-input support (multiple URLs and `--file` flags)
 
 ## Planned / Open Areas
 
-- Optional `--raw` mode (skip Readability and convert full HTML)
 - Optional `--render` mode for JS-rendered pages (headless browser)
-- Optional structured output mode (metadata + markdown)
-- Multi-URL batch processing mode
 - Performance benchmark suite and regression thresholds
+- npm publish
 
 ## Active Planning Docs
 
 - `docs/plans/2026-02-25-fetchmd-brainstorm.md`
 - `docs/plans/2026-02-25-fetchmd-implementation.md`
+- `docs/plans/2026-02-26-json-and-multi-url-plan.md`

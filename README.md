@@ -28,6 +28,15 @@ fetchmd --raw https://example.com
 # Show word count, token estimate, and output size
 fetchmd --stats https://example.com
 
+# Structured JSON output with metadata and stats
+fetchmd --json https://example.com
+
+# Convert multiple URLs at once
+fetchmd https://example.com https://docs.example.com
+
+# Multiple files, JSON array output
+fetchmd --json --file a.html --file b.html
+
 # Compose with other tools
 curl -s https://example.com | fetchmd | llm "summarize this"
 ```

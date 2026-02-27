@@ -6,7 +6,7 @@ Guidance for AI agents working with this codebase.
 
 `fetchmd` is a TypeScript/Node CLI that fetches or ingests HTML and converts it to clean, token-efficient markdown for AI workflows.
 
-Pipeline: parse input -> resolve HTML -> extract primary content -> convert to markdown -> stdout.
+Pipeline: parse input(s) -> resolve HTML -> extract primary content -> convert to markdown -> output (plain or JSON).
 
 **Tech Stack**: Node.js 22+, TypeScript (ESM), Commander, JSDOM + Readability, Turndown (GFM), Vitest, Biome
 
@@ -33,7 +33,7 @@ node dist/index.js --file test/fixtures/article.html
 | Purpose | Location |
 |---------|----------|
 | CLI entrypoint and process-level error handling | `src/index.ts` |
-| Argument parsing and input mode disambiguation | `src/cli.ts` |
+| Argument parsing, multi-input collection, flag handling | `src/cli.ts` |
 | End-to-end pipeline orchestration | `src/pipeline.ts` |
 | URL fetch with timeout/size/redirect controls | `src/fetch.ts` |
 | SSRF and protocol validation | `src/security.ts` |
@@ -72,7 +72,7 @@ pnpm test
 
 ## Implementation Gotchas
 
-1. **Exactly one input mode**: URL, `--file`, or stdin. Avoid adding flows that bypass `parseArgs()` ambiguity checks.
+1. **Multi-input support**: Multiple URLs and `--file` flags can be combined. Stdin is single-input only and cannot mix with URL/file.
 2. **HTTPS-only by design**: Do not broaden protocols without explicit security review.
 3. **Redirect safety**: Redirect targets must continue to pass `validateUrl()` checks.
 4. **Resource limits are part of contract**: timeout, max bytes, and redirect limit are behavioral expectations, not optional tuning.

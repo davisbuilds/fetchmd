@@ -10,9 +10,14 @@ export type InputMode =
   | { mode: "file"; value: string };
 
 export interface CliResult {
-  input: InputMode;
+  inputs: InputMode[];
   raw: boolean;
   stats: boolean;
+  json: boolean;
+}
+
+function collectFile(value: string, previous: string[]): string[] {
+  return [...previous, value];
 }
 
 export function createProgram(): Command {
@@ -22,17 +27,20 @@ export function createProgram(): Command {
     .name("fetchmd")
     .description("Convert any webpage to clean, token-efficient markdown for AI agents")
     .version(pkg.version)
-    .argument("[url]", "URL to fetch and convert to markdown")
-    .option("-f, --file <path>", "read HTML from a local file")
+    .argument("[urls...]", "URLs to fetch and convert to markdown")
+    .option("-f, --file <path>", "read HTML from a local file (repeatable)", collectFile, [])
     .option("-r, --raw", "skip content extraction, convert full HTML")
     .option("-s, --stats", "print word count, token estimate, and size to stderr")
+    .option("-j, --json", "output structured JSON with metadata and stats")
     .addHelpText(
       "after",
       `
 Examples:
   fetchmd https://example.com              Fetch and convert a URL
   fetchmd --file page.html                 Convert a local HTML file
-  curl -s https://example.com | fetchmd    Pipe HTML from stdin`,
+  curl -s https://example.com | fetchmd    Pipe HTML from stdin
+  fetchmd url1 url2 url3                   Convert multiple URLs
+  fetchmd --json https://example.com       Output as structured JSON`,
     );
 
   return program;
@@ -42,24 +50,37 @@ export function parseArgs(argv: string[], isTTY: boolean): CliResult {
   const program = createProgram();
   program.parse(argv);
 
-  const url = program.args[0] as string | undefined;
-  const file = program.opts().file as string | undefined;
+  const urls = program.args as string[];
+  const files = program.opts().file as string[];
 
-  const modes: InputMode[] = [];
+  const inputs: InputMode[] = [];
 
-  if (url) modes.push({ mode: "url", value: url });
-  if (file) modes.push({ mode: "file", value: file });
-  if (!url && !file && !isTTY) modes.push({ mode: "stdin" });
+  for (const url of urls) {
+    inputs.push({ mode: "url", value: url });
+  }
+  for (const file of files) {
+    inputs.push({ mode: "file", value: file });
+  }
 
-  if (modes.length === 0) {
+  const hasExplicitInputs = inputs.length > 0;
+
+  if (!hasExplicitInputs && !isTTY) {
+    inputs.push({ mode: "stdin" });
+  }
+
+  if (inputs.length === 0) {
     program.error("Error: No input provided. Pass a URL, use --file, or pipe HTML via stdin.");
   }
 
-  if (modes.length > 1) {
-    program.error(
-      "Error: Ambiguous input. Provide exactly one of: URL argument, --file, or stdin.",
-    );
+  const hasStdin = inputs.some((i) => i.mode === "stdin");
+  if (hasStdin && inputs.length > 1) {
+    program.error("Error: stdin cannot be combined with URL or --file inputs.");
   }
 
-  return { input: modes[0], raw: !!program.opts().raw, stats: !!program.opts().stats };
+  return {
+    inputs,
+    raw: !!program.opts().raw,
+    stats: !!program.opts().stats,
+    json: !!program.opts().json,
+  };
 }

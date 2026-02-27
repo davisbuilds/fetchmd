@@ -3,10 +3,10 @@
 ## Core Capabilities
 
 - Convert webpage HTML to clean markdown optimized for LLM/agent consumption
-- Support three input modes:
-  - URL positional argument
-  - `--file <path>` local HTML input
-  - stdin pipe input
+- Support multiple input modes:
+  - One or more URL positional arguments
+  - One or more `--file <path>` local HTML inputs (repeatable)
+  - stdin pipe input (single-input only, cannot combine with URL/file)
 - Extract main content (article-first) before conversion
 - Preserve developer-relevant markdown structures (tables, fenced code blocks, lists)
 - Work in Unix pipelines (`stdout` output, `stderr` errors)
@@ -14,28 +14,55 @@
 ## CLI Surface
 
 ```bash
-fetchmd [url]
+fetchmd [urls...]
 fetchmd --file page.html
+fetchmd --file a.html --file b.html
+fetchmd url1 url2 --file local.html
 curl -s https://example.com | fetchmd
 ```
 
 ### Flags
 
-- `-f, --file <path>`: read HTML from local file
+- `-f, --file <path>`: read HTML from local file (repeatable)
 - `-r, --raw`: skip Readability extraction, convert full HTML to markdown
 - `-s, --stats`: print word count, estimated token count, and output size to stderr
+- `-j, --json`: output structured JSON with metadata and stats
 - `-h, --help`: usage and examples
 - `-V, --version`: package version
 
 ## Input Rules
 
-Exactly one input source is allowed per invocation:
+Multiple URL arguments and `--file` flags can be combined freely. Stdin is auto-detected when no explicit inputs are provided and the terminal is not a TTY. Stdin cannot be combined with URL or file inputs.
 
-- URL argument
-- `--file`
-- stdin (auto-detected when not TTY and no URL/file provided)
+When multiple inputs are provided:
+- **Plain mode**: results are concatenated with `<!-- source: ... -->` comments, H2 source headings, and `---` separators
+- **JSON mode**: output is a JSON array of result objects
 
-Ambiguous or missing input is rejected with an error.
+When a single input is provided:
+- **Plain mode**: markdown output only (no source header)
+- **JSON mode**: output is a single JSON object (not an array)
+
+## JSON Output Schema
+
+```json
+{
+  "source": "https://example.com",
+  "title": "Page Title",
+  "excerpt": "First paragraph...",
+  "markdown": "# Page Title\n\nContent...",
+  "stats": {
+    "words": 1500,
+    "tokens": 2000,
+    "bytes": 8192
+  }
+}
+```
+
+Stats are always included in JSON output regardless of `--stats` flag.
+
+## Multi-Input Error Handling
+
+If one input fails in multi-input mode, the error is logged to stderr and processing continues with remaining inputs. Exit code is `1` if any input failed, `0` if all succeeded. If all inputs fail, the process exits with an error.
 
 ## Conversion Behavior
 
@@ -57,4 +84,4 @@ Ambiguous or missing input is rejected with an error.
 ## Exit Codes
 
 - `0`: success
-- `1`: failure
+- `1`: failure (or partial failure in multi-input mode)

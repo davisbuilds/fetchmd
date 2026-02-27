@@ -2,11 +2,11 @@
 
 `fetchmd` is a Node.js CLI that converts HTML into clean markdown through a linear pipeline:
 
-1. Parse input mode (`url`, `--file`, or `stdin`) and flags (`--raw`, `--stats`)
-2. Resolve and load HTML
+1. Parse input modes (`url`, `--file`, or `stdin`) and flags (`--raw`, `--stats`, `--json`)
+2. For each input, resolve and load HTML
 3. Extract primary article content (or skip with `--raw`)
-4. Convert HTML to markdown
-5. Write markdown to stdout
+4. Convert HTML to markdown and compute stats
+5. Output: plain markdown to stdout, or structured JSON (`--json`)
 6. Optionally write stats to stderr (`--stats`)
 
 ## Runtime Shape
@@ -20,8 +20,8 @@
 ## Module Map
 
 - `src/index.ts`: process entrypoint, EPIPE handling, top-level error handling
-- `src/pipeline.ts`: orchestrates parse -> input -> extract -> convert -> stdout
-- `src/cli.ts`: argument parsing and input mode disambiguation
+- `src/pipeline.ts`: orchestrates parse -> input(s) -> extract -> convert -> output (plain or JSON)
+- `src/cli.ts`: argument parsing, multi-input collection, and flag handling
 - `src/input.ts`: URL/file/stdin input resolution with 5MB limit
 - `src/security.ts`: URL protocol + DNS/IP SSRF validation
 - `src/fetch.ts`: HTTPS fetch with timeout, size limit, manual redirects
@@ -48,6 +48,7 @@
 
 - Success: markdown to stdout, exit code `0`
 - Failure: error to stderr, exit code `1`
+- Partial failure (multi-input): successful results still output, failed inputs logged to stderr, exit code `1`
 - Broken pipe (`EPIPE`): exits `0` to support Unix pipelines like `| head`
 
 ## Security Boundaries

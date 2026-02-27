@@ -111,6 +111,84 @@ describe("e2e: --stats mode", () => {
   });
 });
 
+describe("e2e: --json mode", () => {
+  it("outputs valid JSON for single file", async () => {
+    const { stdout, code } = await run(["--json", "--file", `${FIXTURES}/blog-article.html`]);
+    expect(code).toBe(0);
+    const result = JSON.parse(stdout);
+    expect(result.source).toContain("blog-article.html");
+    expect(result.title).toBe("How to Build a CLI Tool");
+    expect(result.markdown).toContain("# How to Build a CLI Tool");
+    expect(result.stats).toBeDefined();
+    expect(result.stats.words).toBeGreaterThan(0);
+    expect(result.stats.tokens).toBeGreaterThan(0);
+    expect(result.stats.bytes).toBeGreaterThan(0);
+  });
+
+  it("outputs JSON with piped stdin", async () => {
+    const html = "<html><body><article><h1>JSON Test</h1><p>Content here for JSON output testing.</p><p>More content.</p><p>Even more.</p></article></body></html>";
+    const { stdout, code } = await run(["--json"], html);
+    expect(code).toBe(0);
+    const result = JSON.parse(stdout);
+    expect(result.source).toBe("stdin");
+    expect(result.markdown).toContain("JSON Test");
+    expect(result.stats).toBeDefined();
+  });
+});
+
+describe("e2e: multi-input mode", () => {
+  it("concatenates multiple files with separators", async () => {
+    const { stdout, code } = await run([
+      "--file", `${FIXTURES}/blog-article.html`,
+      "--file", `${FIXTURES}/docs-page.html`,
+    ]);
+    expect(code).toBe(0);
+    expect(stdout).toContain("blog-article.html");
+    expect(stdout).toContain("docs-page.html");
+    expect(stdout).toContain("---");
+    expect(stdout).toContain("How to Build a CLI Tool");
+    expect(stdout).toContain("API Reference");
+  });
+
+  it("outputs JSON array for multiple files", async () => {
+    const { stdout, code } = await run([
+      "--json",
+      "--file", `${FIXTURES}/blog-article.html`,
+      "--file", `${FIXTURES}/docs-page.html`,
+    ]);
+    expect(code).toBe(0);
+    const results = JSON.parse(stdout);
+    expect(Array.isArray(results)).toBe(true);
+    expect(results).toHaveLength(2);
+    expect(results[0].source).toContain("blog-article.html");
+    expect(results[1].source).toContain("docs-page.html");
+    expect(results[0].stats).toBeDefined();
+    expect(results[1].stats).toBeDefined();
+  });
+
+  it("prints per-source stats for multiple files", async () => {
+    const { stderr, code } = await run([
+      "--stats",
+      "--file", `${FIXTURES}/blog-article.html`,
+      "--file", `${FIXTURES}/docs-page.html`,
+    ]);
+    expect(code).toBe(0);
+    expect(stderr).toContain("blog-article.html");
+    expect(stderr).toContain("docs-page.html");
+    expect(stderr).toContain("total:");
+  });
+
+  it("continues on failure and reports errors", async () => {
+    const { stdout, stderr, code } = await run([
+      "--file", `${FIXTURES}/blog-article.html`,
+      "--file", "/nonexistent/path.html",
+    ]);
+    expect(code).not.toBe(0);
+    expect(stdout).toContain("How to Build a CLI Tool");
+    expect(stderr).toContain("/nonexistent/path.html");
+  });
+});
+
 describe("e2e: error cases", () => {
   it("errors on nonexistent file", async () => {
     const { stderr, code } = await run(["--file", "/nonexistent/path.html"]);
