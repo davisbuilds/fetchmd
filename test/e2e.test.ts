@@ -189,6 +189,65 @@ describe("e2e: multi-input mode", () => {
   });
 });
 
+describe("e2e: --render mode", () => {
+  it("--render with --file processes normally (no browser needed)", async () => {
+    const { stdout, code } = await run([
+      "--render",
+      "--file",
+      `${FIXTURES}/blog-article.html`,
+    ]);
+    expect(code).toBe(0);
+    expect(stdout).toContain("# How to Build a CLI Tool");
+  });
+
+  it("--render composes with --json on file input", async () => {
+    const { stdout, code } = await run([
+      "--render",
+      "--json",
+      "--file",
+      `${FIXTURES}/blog-article.html`,
+    ]);
+    expect(code).toBe(0);
+    const result = JSON.parse(stdout);
+    expect(result.title).toBe("How to Build a CLI Tool");
+    expect(result.stats).toBeDefined();
+  });
+
+  it("--render composes with --stats on file input", async () => {
+    const { stdout, stderr, code } = await run([
+      "--render",
+      "--stats",
+      "--file",
+      `${FIXTURES}/blog-article.html`,
+    ]);
+    expect(code).toBe(0);
+    expect(stdout).toContain("# How to Build a CLI Tool");
+    expect(stderr).toMatch(/\d[\d,]* words/);
+  });
+
+  it("-R shorthand works in E2E", async () => {
+    const { stdout, code } = await run([
+      "-R",
+      "--file",
+      `${FIXTURES}/blog-article.html`,
+    ]);
+    expect(code).toBe(0);
+    expect(stdout).toContain("# How to Build a CLI Tool");
+  });
+
+  it("--render with --file does not execute JavaScript (file mode bypasses browser)", async () => {
+    const { stdout, code } = await run([
+      "--render",
+      "--file",
+      `${FIXTURES}/spa-shell.html`,
+    ]);
+    expect(code).toBe(0);
+    // File mode does not run JS, so Readability will try to extract what's in the static HTML
+    // The script-rendered content won't be present
+    expect(stdout).not.toContain("Dynamic Content");
+  });
+});
+
 describe("e2e: error cases", () => {
   it("errors on nonexistent file", async () => {
     const { stderr, code } = await run(["--file", "/nonexistent/path.html"]);

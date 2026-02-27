@@ -1,6 +1,8 @@
 import { promises as fs } from "node:fs";
 import type { Readable } from "node:stream";
+import type { Browser } from "puppeteer";
 import { type FetchOptions, fetchHtml } from "./fetch.js";
+import { type RenderOptions, renderHtml } from "./render.js";
 import { type ValidateUrlOptions, validateUrl } from "./security.js";
 
 const MAX_INPUT_BYTES = 5 * 1024 * 1024; // 5MB
@@ -9,6 +11,9 @@ export interface InputOptions {
   fetch?: typeof globalThis.fetch;
   stdin?: Readable;
   dnsLookup?: ValidateUrlOptions["dnsLookup"];
+  render?: boolean;
+  browser?: Browser;
+  renderOptions?: RenderOptions;
 }
 
 export type InputMode =
@@ -38,11 +43,15 @@ export async function resolveInput(input: InputMode, options?: InputOptions): Pr
   switch (input.mode) {
     case "url": {
       const url = await validateUrl(input.value, { dnsLookup: options?.dnsLookup });
-      const fetchOpts: FetchOptions = {
-        fetch: options?.fetch,
-        dnsLookup: options?.dnsLookup,
-      };
-      html = await fetchHtml(url, fetchOpts);
+      if (options?.render && options.browser) {
+        html = await renderHtml(url, options.browser, options.renderOptions);
+      } else {
+        const fetchOpts: FetchOptions = {
+          fetch: options?.fetch,
+          dnsLookup: options?.dnsLookup,
+        };
+        html = await fetchHtml(url, fetchOpts);
+      }
       break;
     }
 

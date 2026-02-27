@@ -84,4 +84,29 @@ describe("parseArgs", () => {
     const result = parseArgs([...node, "https://example.com"], true);
     expect(result.json).toBe(false);
   });
+
+  it("parses --render flag", () => {
+    const result = parseArgs([...node, "--render", "https://example.com"], true);
+    expect(result.render).toBe(true);
+  });
+
+  it("parses -R shorthand", () => {
+    const result = parseArgs([...node, "-R", "https://example.com"], true);
+    expect(result.render).toBe(true);
+  });
+
+  it("defaults render to false", () => {
+    const result = parseArgs([...node, "https://example.com"], true);
+    expect(result.render).toBe(false);
+  });
+
+  it("combines --render with --json and --stats", () => {
+    const result = parseArgs(
+      [...node, "--render", "--json", "--stats", "https://example.com"],
+      true,
+    );
+    expect(result.render).toBe(true);
+    expect(result.json).toBe(true);
+    expect(result.stats).toBe(true);
+  });
 });

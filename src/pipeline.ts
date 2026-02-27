@@ -1,8 +1,10 @@
 import type { Writable } from "node:stream";
+import type { Browser } from "puppeteer";
 import { type InputMode, parseArgs } from "./cli.js";
 import { toMarkdown } from "./convert.js";
 import { extractContent } from "./extract.js";
 import { type InputOptions, resolveInput } from "./input.js";
+import { createBrowser, loadPuppeteer } from "./render.js";
 import { computeStats, formatStats, type Stats } from "./stats.js";
 
 export interface PipelineOptions {
@@ -60,25 +62,38 @@ export async function run(
   const stdout = options?.stdout ?? process.stdout;
   const stderr = options?.stderr ?? process.stderr;
 
-  const { inputs, raw, stats, json } = parseArgs(argv, isTTY);
+  const { inputs, raw, stats, json, render } = parseArgs(argv, isTTY);
 
   const inputOpts: InputOptions = {
     fetch: options?.fetch,
     stdin: options?.stdin as import("node:stream").Readable | undefined,
+    render,
   };
+
+  // Launch browser if --render is active and there are URL inputs
+  let browser: Browser | undefined;
+  if (render && inputs.some((i) => i.mode === "url")) {
+    const puppeteer = await loadPuppeteer();
+    browser = await createBrowser(puppeteer);
+    inputOpts.browser = browser;
+  }
 
   const results: ResultRecord[] = [];
   let hasErrors = false;
 
-  for (const input of inputs) {
-    try {
-      const result = await processOne(input, raw, inputOpts);
-      results.push(result);
-    } catch (err) {
-      hasErrors = true;
-      const msg = err instanceof Error ? err.message : String(err);
-      stderr.write(`Error processing ${sourceLabel(input)}: ${msg}\n`);
+  try {
+    for (const input of inputs) {
+      try {
+        const result = await processOne(input, raw, inputOpts);
+        results.push(result);
+      } catch (err) {
+        hasErrors = true;
+        const msg = err instanceof Error ? err.message : String(err);
+        stderr.write(`Error processing ${sourceLabel(input)}: ${msg}\n`);
+      }
     }
+  } finally {
+    await browser?.close();
   }
 
   if (results.length === 0) {

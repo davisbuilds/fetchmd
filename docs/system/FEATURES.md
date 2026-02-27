@@ -27,6 +27,7 @@ curl -s https://example.com | fetchmd
 - `-r, --raw`: skip Readability extraction, convert full HTML to markdown
 - `-s, --stats`: print word count, estimated token count, and output size to stderr
 - `-j, --json`: output structured JSON with metadata and stats
+- `-R, --render`: render JS-heavy pages in a headless browser before extraction (requires Puppeteer)
 - `-h, --help`: usage and examples
 - `-V, --version`: package version
 
@@ -64,6 +65,23 @@ Stats are always included in JSON output regardless of `--stats` flag.
 
 If one input fails in multi-input mode, the error is logged to stderr and processing continues with remaining inputs. Exit code is `1` if any input failed, `0` if all succeeded. If all inputs fail, the process exits with an error.
 
+## Render Mode
+
+When `--render` is active, URL inputs are loaded in a headless browser (Puppeteer) instead of a plain HTTP fetch. This enables content extraction from:
+
+- **SPAs**: React, Vue, Angular apps where initial HTML is empty and content is rendered by JavaScript
+- **Client-rendered pages**: Sites that rely on JS for primary content loading
+
+Behavior:
+- Puppeteer is an optional peer dependency — fetchmd works without it for standard pages
+- `--render` only applies to URL inputs; file and stdin inputs are unaffected
+- The browser waits for `networkidle2` (no more than 2 open connections for 500ms) before extracting HTML
+- Default render timeout is 30 seconds; on timeout, partial content is used if available
+- A single browser instance is shared across multiple URL inputs
+- `--render` composes with all other flags (`--raw`, `--stats`, `--json`)
+
+Security: The initial URL is validated through SSRF checks. Browser-internal redirects and sub-resource requests are not intercepted. Only use `--render` with URLs you trust.
+
 ## Conversion Behavior
 
 - Headings use ATX format (`#`, `##`, ...)
@@ -76,7 +94,7 @@ If one input fails in multi-input mode, the error is logged to stderr and proces
 ## Operational Limits
 
 - HTTPS only for URL fetches
-- Request timeout: 15 seconds (default)
+- Request timeout: 15 seconds (default), 30 seconds for `--render` mode
 - Response size limit: 5MB (default)
 - Redirect limit: 5 hops (manual, validated)
 - File/stdin size limit: 5MB

@@ -8,7 +8,7 @@ Guidance for AI agents working with this codebase.
 
 Pipeline: parse input(s) -> resolve HTML -> extract primary content -> convert to markdown -> output (plain or JSON).
 
-**Tech Stack**: Node.js 22+, TypeScript (ESM), Commander, JSDOM + Readability, Turndown (GFM), Vitest, Biome
+**Tech Stack**: Node.js 22+, TypeScript (ESM), Commander, JSDOM + Readability, Turndown (GFM), Puppeteer (optional), Vitest, Biome
 
 ## Commands
 
@@ -40,6 +40,7 @@ node dist/index.js --file test/fixtures/article.html
 | Input resolution for URL/file/stdin | `src/input.ts` |
 | Readability extraction | `src/extract.ts` |
 | Markdown conversion rules | `src/convert.ts` |
+| Headless browser rendering (optional Puppeteer) | `src/render.ts` |
 | Word count, token estimation, output size | `src/stats.ts` |
 | Unit tests | `src/*.test.ts` |
 | E2E tests and fixtures | `test/e2e.test.ts`, `test/fixtures/` |
@@ -78,6 +79,7 @@ pnpm test
 4. **Resource limits are part of contract**: timeout, max bytes, and redirect limit are behavioral expectations, not optional tuning.
 5. **Readability fallback warning**: `extractContent()` intentionally warns to stderr when extraction fails and body fallback is used.
 6. **E2E dependency on build artifacts**: `test/e2e.test.ts` runs `dist/index.js`; tests fail if `dist/` is missing.
+7. **`--render` is optional**: Puppeteer is an optional peer dependency. `--render` only applies to URL inputs (file/stdin are unaffected). The security model differs: initial URL is SSRF-validated, but browser-internal redirects and sub-resources are not intercepted.
 
 ## Documentation Map
 

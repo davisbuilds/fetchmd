@@ -14,6 +14,7 @@ export interface CliResult {
   raw: boolean;
   stats: boolean;
   json: boolean;
+  render: boolean;
 }
 
 function collectFile(value: string, previous: string[]): string[] {
@@ -32,6 +33,7 @@ export function createProgram(): Command {
     .option("-r, --raw", "skip content extraction, convert full HTML")
     .option("-s, --stats", "print word count, token estimate, and size to stderr")
     .option("-j, --json", "output structured JSON with metadata and stats")
+    .option("-R, --render", "render JS-heavy pages in a headless browser (requires Puppeteer)")
     .addHelpText(
       "after",
       `
@@ -40,7 +42,8 @@ Examples:
   fetchmd --file page.html                 Convert a local HTML file
   curl -s https://example.com | fetchmd    Pipe HTML from stdin
   fetchmd url1 url2 url3                   Convert multiple URLs
-  fetchmd --json https://example.com       Output as structured JSON`,
+  fetchmd --json https://example.com       Output as structured JSON
+  fetchmd --render https://spa.example.com Render JS-heavy page first`,
     );
 
   return program;
@@ -82,5 +85,6 @@ export function parseArgs(argv: string[], isTTY: boolean): CliResult {
     raw: !!program.opts().raw,
     stats: !!program.opts().stats,
     json: !!program.opts().json,
+    render: !!program.opts().render,
   };
 }

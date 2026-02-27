@@ -15,10 +15,10 @@ This roadmap is a lightweight planning snapshot, not a release contract.
 - `--stats` flag (word count, token estimate, output size to stderr)
 - `--json` structured output (metadata + markdown + stats)
 - Multi-input support (multiple URLs and `--file` flags)
+- `--render` mode for JS-rendered pages (headless browser via optional Puppeteer)
 
 ## Planned / Open Areas
 
-- Optional `--render` mode for JS-rendered pages (headless browser)
 - Performance benchmark suite and regression thresholds
 - npm publish
 

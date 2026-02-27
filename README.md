@@ -10,6 +10,16 @@ npm install -g fetchmd
 
 Requires Node.js >= 22.
 
+### Optional: Render Mode
+
+To convert JS-heavy pages (SPAs, client-rendered content), install [Puppeteer](https://purl.org/nicktomlin/puppeteer):
+
+```bash
+npm install -g puppeteer
+```
+
+Then use the `--render` flag. This is optional — fetchmd works without Puppeteer for standard pages.
+
 ## Usage
 
 ```bash
@@ -37,6 +47,9 @@ fetchmd https://example.com https://docs.example.com
 # Multiple files, JSON array output
 fetchmd --json --file a.html --file b.html
 
+# Render JS-heavy pages (requires Puppeteer)
+fetchmd --render https://spa.example.com
+
 # Compose with other tools
 curl -s https://example.com | fetchmd | llm "summarize this"
 ```
@@ -56,6 +69,8 @@ Output goes to stdout. Errors go to stderr. Designed for Unix pipelines.
 - DNS resolution validated against RFC 1918, loopback, and link-local ranges
 - 5MB response size limit and 15-second timeout
 - Redirect targets are re-validated through the same security checks
+
+**Note on `--render` mode**: When using `--render`, the initial URL is validated through the same SSRF checks. However, since a real browser executes the page's JavaScript, sub-resource requests and browser-internal redirects are not intercepted. Only use `--render` with URLs you trust.
 
 ## Exit Codes
 

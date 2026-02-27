@@ -14,6 +14,7 @@
 - Language/runtime: TypeScript on Node.js (ESM)
 - CLI parser: Commander
 - Extraction: Mozilla Readability + JSDOM
+- Rendering: Puppeteer (optional, for `--render` mode)
 - Conversion: Turndown + `turndown-plugin-gfm`
 - Tests: Vitest (unit + e2e)
 
@@ -27,14 +28,20 @@
 - `src/fetch.ts`: HTTPS fetch with timeout, size limit, manual redirects
 - `src/extract.ts`: Readability extraction with body fallback
 - `src/convert.ts`: HTML-to-markdown transformation and post-processing
+- `src/render.ts`: headless browser rendering with Puppeteer (optional dependency)
 - `src/stats.ts`: word count, token estimation, and output size formatting
 
 ## Data Flow
 
-- URL mode:
+- URL mode (standard):
   - `validateUrl()` enforces HTTPS and blocks private/internal hosts
   - `fetchHtml()` fetches with timeout and max size
   - Redirect locations are re-validated on each hop
+- URL mode (`--render`):
+  - `validateUrl()` checks the initial URL
+  - `renderHtml()` launches a headless browser page, navigates, waits for `networkidle2`
+  - Browser handles redirects internally (not individually validated)
+  - Rendered HTML is extracted via `page.content()`
 - File/stdin mode:
   - HTML is read directly with size checks
 - Extraction:
