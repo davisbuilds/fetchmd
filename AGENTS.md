@@ -86,3 +86,4 @@ pnpm test
 - System docs: `docs/system/ARCHITECTURE.md`, `docs/system/FEATURES.md`, `docs/system/OPERATIONS.md`
 - Project docs: `docs/project/ROADMAP.md`, `docs/project/GIT_HISTORY_POLICY.md`
 - Planning docs: `docs/plans/`
+- Agent skill (operator reference): `skills/SKILL.md` — concise guide for agents using fetchmd as a tool in workflows (install, invoke, parse output).
