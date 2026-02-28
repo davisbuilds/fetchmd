@@ -1,5 +1,5 @@
 {
-  "name": "fetchmd",
+  "name": "@davisbuilds/fetchmd",
   "version": "0.1.0",
   "description": "Convert any webpage to clean, token-efficient markdown for AI agents",
   "type": "module",

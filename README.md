@@ -5,7 +5,7 @@ Convert any webpage to clean, token-efficient markdown for AI agents.
 ## Install
 
 ```bash
-npm install -g fetchmd
+npm install -g @davisbuilds/fetchmd
 ```
 
 Requires Node.js >= 22.
