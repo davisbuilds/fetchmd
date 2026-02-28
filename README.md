@@ -81,7 +81,8 @@ Output goes to stdout. Errors go to stderr. Designed for Unix pipelines.
 
 ## Documentation
 
-- Agent guidance: [AGENTS.md](AGENTS.md)
+- Agent skill (operator reference): [skills/SKILL.md](skills/SKILL.md)
+- Agent guidance (developer reference): [AGENTS.md](AGENTS.md)
 - Architecture: [docs/system/ARCHITECTURE.md](docs/system/ARCHITECTURE.md)
 - Features and CLI behavior: [docs/system/FEATURES.md](docs/system/FEATURES.md)
 - Operations and release workflow: [docs/system/OPERATIONS.md](docs/system/OPERATIONS.md)
