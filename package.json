@@ -11,6 +11,7 @@
   },
   "files": [
     "dist",
+    "!dist/**/*.test.*",
     "README.md",
     "LICENSE"
   ],
@@ -33,7 +34,7 @@
     "web-scraping"
   ],
   "license": "MIT",
-  "author": "",
+  "author": "davisbuilds",
   "dependencies": {
     "@mozilla/readability": "^0.6.0",
     "commander": "^14.0.3",
