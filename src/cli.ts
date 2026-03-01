@@ -21,7 +21,7 @@ function collectFile(value: string, previous: string[]): string[] {
   return [...previous, value];
 }
 
-export function createProgram(): Command {
+function createProgram(): Command {
   const program = new Command();
 
   program
