@@ -61,15 +61,13 @@ node dist/index.js --file test/fixtures/article.html
 
 ## Testing
 
+**Pre-push check**: Before pushing updates to the remote, run `pnpm lint`, `pnpm build`, and `pnpm test`.
+
+**TDD**: Use red/green TDD for new features and major changes.
+
+**Key patterns**:
 - Framework: Vitest (`src/**/*.test.ts`, `test/**/*.test.ts`)
 - E2E tests execute `dist/index.js`; build first in clean environments.
-
-Recommended sequence:
-
-```bash
-pnpm build
-pnpm test
-```
 
 ## Implementation Gotchas
 
