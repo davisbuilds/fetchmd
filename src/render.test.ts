@@ -33,6 +33,7 @@ describe("loadPuppeteer", () => {
     // Re-import to pick up the mock
     const { loadPuppeteer: load } = await import("./render.js");
     await expect(load()).rejects.toThrow(RenderError);
+    await expect(load()).rejects.toThrow("pnpm add -D puppeteer");
     await expect(load()).rejects.toThrow("npm install -g puppeteer");
   });
 });

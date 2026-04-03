@@ -15,10 +15,16 @@ Requires Node.js >= 22.
 To convert JS-heavy pages (SPAs, client-rendered content), install [Puppeteer](https://purl.org/nicktomlin/puppeteer):
 
 ```bash
+pnpm add -D puppeteer
+```
+
+If you are using a global `fetchmd` install, install Puppeteer globally instead:
+
+```bash
 npm install -g puppeteer
 ```
 
-Then use the `--render` flag. This is optional — fetchmd works without Puppeteer for standard pages.
+Then use the `--render` flag. This is optional; fetchmd works without Puppeteer for standard pages.
 
 ## Usage
 

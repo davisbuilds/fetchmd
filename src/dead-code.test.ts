@@ -51,15 +51,18 @@ function extractExports(content: string): ExportInfo[] {
     found.push({ name, isDefaultName });
   };
 
-  const declRe =
-    /export\s+(?:async\s+)?(?:function\*?|const|let|var|class|enum)\s+(\w+)/g;
-  while ((match = declRe.exec(content))) add(match[1], false);
+  const declRe = /export\s+(?:async\s+)?(?:function\*?|const|let|var|class|enum)\s+(\w+)/g;
+  for (match = declRe.exec(content); match; match = declRe.exec(content)) {
+    add(match[1], false);
+  }
 
   const defaultRe = /export\s+default\s+(?:async\s+)?(?:function\*?|class)\s+(\w+)/g;
-  while ((match = defaultRe.exec(content))) add(match[1], true);
+  for (match = defaultRe.exec(content); match; match = defaultRe.exec(content)) {
+    add(match[1], true);
+  }
 
   const braceRe = /export\s*\{([^}]+)\}/g;
-  while ((match = braceRe.exec(content))) {
+  for (match = braceRe.exec(content); match; match = braceRe.exec(content)) {
     const items = match[1].split(",");
     for (const item of items) {
       const trimmed = item.trim();
@@ -78,13 +81,19 @@ function extractSpecifiers(content: string): string[] {
   let match: RegExpExecArray | null;
 
   const fromRe = /\b(?:import|export)\b[\s\S]*?\bfrom\s*['"]([^'"]+)['"]/g;
-  while ((match = fromRe.exec(content))) specifiers.push(match[1]);
+  for (match = fromRe.exec(content); match; match = fromRe.exec(content)) {
+    specifiers.push(match[1]);
+  }
 
   const sideEffectRe = /\bimport\s*['"]([^'"]+)['"]/g;
-  while ((match = sideEffectRe.exec(content))) specifiers.push(match[1]);
+  for (match = sideEffectRe.exec(content); match; match = sideEffectRe.exec(content)) {
+    specifiers.push(match[1]);
+  }
 
   const dynamicRe = /\bimport\(\s*['"]([^'"]+)['"]\s*\)/g;
-  while ((match = dynamicRe.exec(content))) specifiers.push(match[1]);
+  for (match = dynamicRe.exec(content); match; match = dynamicRe.exec(content)) {
+    specifiers.push(match[1]);
+  }
 
   return specifiers;
 }
@@ -203,7 +212,10 @@ describe("Dead Code Detection", () => {
     }
 
     if (orphaned.length > 0) {
-      const report = orphaned.sort().map((entry) => `  ${entry}`).join("\n");
+      const report = orphaned
+        .sort()
+        .map((entry) => `  ${entry}`)
+        .join("\n");
       expect.fail(
         `Found ${orphaned.length} orphaned source file(s).\n` +
           `Either remove or add to FILE_EXCEPTIONS:\n${report}`,

@@ -19,7 +19,7 @@ export async function loadPuppeteer(): Promise<PuppeteerModule> {
     return mod.default ?? mod;
   } catch {
     throw new RenderError(
-      "--render requires Puppeteer.\nInstall it with: npm install -g puppeteer",
+      "--render requires Puppeteer.\nInstall it in this project with: pnpm add -D puppeteer\nIf fetchmd is installed globally, install Puppeteer globally too: npm install -g puppeteer",
     );
   }
 }
