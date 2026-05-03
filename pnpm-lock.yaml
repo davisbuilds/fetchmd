@@ -18,8 +18,8 @@ importers:
         specifier: ^28.1.0
         version: 28.1.0
       turndown:
-        specifier: ^7.2.2
-        version: 7.2.2
+        specifier: ^7.2.4
+        version: 7.2.4
       turndown-plugin-gfm:
         specifier: ^1.0.2
         version: 1.0.2
@@ -1036,8 +1036,9 @@ packages:
   turndown-plugin-gfm@1.0.2:
     resolution: {integrity: sha512-vwz9tfvF7XN/jE0dGoBei3FXWuvll78ohzCZQuOb+ZjWrs3a0XhQVomJEb2Qh4VHTPNRO4GPZh0V7VRbiWwkRg==}
 
-  turndown@7.2.2:
-    resolution: {integrity: sha512-1F7db8BiExOKxjSMU2b7if62D/XOyQyZbPKq/nUwopfgnHlqXHqQ0lvfUTeUIr1lZJzOPFn43dODyMSIfvWRKQ==}
+  turndown@7.2.4:
+    resolution: {integrity: sha512-I8yFsfRzmzK0WV1pNNOA4A7y4RDfFxPRxb3t+e3ui14qSGOxGtiSP6GjeX+Y6CHb7HYaFj7ECUD7VE5kQMZWGQ==}
+    engines: {node: '>=18', npm: '>=9'}
 
   typed-query-selector@2.12.1:
     resolution: {integrity: sha512-uzR+FzI8qrUEIu96oaeBJmd9E7CFEiQ3goA5qCVgc4s5llSubcfGHq9yUstZx/k4s9dXHVKsE35YWoFyvEqEHA==}
@@ -2137,7 +2138,7 @@ snapshots:
 
   turndown-plugin-gfm@1.0.2: {}
 
-  turndown@7.2.2:
+  turndown@7.2.4:
     dependencies:
       '@mixmark-io/domino': 2.2.0
 
