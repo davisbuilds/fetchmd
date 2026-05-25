@@ -14,11 +14,12 @@ Pipeline: parse input(s) → resolve HTML → extract primary content → conver
 - `docs/plans/` — historical brainstorm and implementation plans.
 - `skills/SKILL.md` — operator reference for using fetchmd as a tool inside agent workflows (install, invoke, parse output).
 
-## Quickstart
+## Command Quickstart
 
 ```bash
 pnpm install
 pnpm check          # lint + test + build (matches prepublishOnly)
+node dist/index.js --help              # list all available commands/flags
 node dist/index.js https://example.com
 ```
 
@@ -37,3 +38,8 @@ These are policy/steering, not facts. Behavioral facts (limits, flags, security 
 - **Pre-push**: `pnpm check` (lint + test + build).
 - **TDD**: red/green for new features and major changes.
 - **E2E** (`test/**/*.test.ts`) executes `dist/index.js` — run `pnpm build` first in clean clones.
+
+## Working Agreement
+
+- **Push back before building.** If a request is incoherent or self-contradictory, or a spec/plan is vague or skips key decisions, stop and interview me — ask clarifying questions and confirm intent before writing code or changing files. Don't guess at scope or comply silently. (Clear, well-scoped requests don't need this.)
+- **Keep docs current.** After a significant change, PR, or completed spec/plan, update any now-stale reference docs under `docs/system/` (and `docs/project/ROADMAP.md`) so they match shipped behavior. Skip this for trivial changes.
