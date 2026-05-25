@@ -2,6 +2,32 @@
 
 Convert any webpage to clean, token-efficient markdown for AI agents.
 
+## Agent Setup
+
+New here? Paste the prompt below into your coding agent (Claude Code, Codex, etc.) to set up the repo for development and verify it builds. (Just want to use the tool? `npm install -g @davisbuilds/fetchmd` — see Install below.)
+
+```text
+Set up the `fetchmd` repo for development. It's a TypeScript/Node CLI that converts
+webpages (or local HTML) into clean, token-efficient markdown for AI workflows. No
+env vars or secrets.
+
+Do this, in order:
+1. Install deps. Prereq: Node >= 22. Run `pnpm install` from the repo root. Clone
+   https://github.com/davisbuilds/fetchmd.git and cd in first if needed.
+2. Verify it builds and passes checks WITHOUT network: run `pnpm check`
+   (lint + test + build — the e2e tests execute the built `dist/`), then
+   `node dist/index.js --help`. Both should succeed. If either fails, show me the
+   error and stop.
+3. Report back: confirm `pnpm check` + help worked, and give me a real example to
+   run (`node dist/index.js https://example.com`, or the global binary
+   `fetchmd https://example.com`). Note that `--render` for JS-heavy pages needs
+   Puppeteer installed separately.
+
+Don't commit anything.
+```
+
+Prefer to do it yourself? Install and usage are below.
+
 ## Install
 
 ```bash
