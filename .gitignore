@@ -4,3 +4,7 @@ dist/
 *.tgz
 coverage/
 .DS_Store
+**/archive/
+.claude
+.agents
+.agent
