@@ -38,6 +38,7 @@ These are policy/steering, not facts. Behavioral facts (limits, flags, security 
 - **Pre-push**: `pnpm check` (lint + test + build).
 - **TDD**: red/green for new features and major changes.
 - **E2E** (`test/**/*.test.ts`) executes `dist/index.js` — run `pnpm build` first in clean clones.
+- **Dead-code gate** (`src/dead-code.test.ts`): static checks for unreferenced exports and orphaned source files. It owns cross-file dead code; biome `recommended` owns within-file unused vars/imports and unreachable code. When an export is intentionally unreferenced (e.g. a public type required by the declaration-emitting build), add it to `EXPORT_EXCEPTIONS`/`FILE_EXCEPTIONS` with a reason rather than silencing the test.
 
 ## Working Agreement
 

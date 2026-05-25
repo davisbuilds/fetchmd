@@ -9,7 +9,15 @@ const SEARCH_ROOTS = [path.join(ROOT, "src"), path.join(ROOT, "test")];
 
 const SKIP_DIRS = new Set(["node_modules", ".git", "dist", "docs", "skills"]);
 
-const EXPORT_EXCEPTIONS = new Set<string>([]);
+const EXPORT_EXCEPTIONS = new Set<string>([
+  // Public type surface: each is the return/option type of an exported function,
+  // so its `export` is required by the declaration-emitting build (tsc
+  // `declaration: true`) even though no module imports it by name.
+  "src/cli.ts::CliResult",
+  "src/extract.ts::ExtractResult",
+  "src/pipeline.ts::PipelineOptions",
+  "src/render.ts::PuppeteerModule",
+]);
 
 const FILE_EXCEPTIONS = new Set<string>(["src/index.ts"]);
 
@@ -51,7 +59,8 @@ function extractExports(content: string): ExportInfo[] {
     found.push({ name, isDefaultName });
   };
 
-  const declRe = /export\s+(?:async\s+)?(?:function\*?|const|let|var|class|enum)\s+(\w+)/g;
+  const declRe =
+    /export\s+(?:async\s+)?(?:function\*?|const|let|var|class|enum|type|interface)\s+(\w+)/g;
   for (match = declRe.exec(content); match; match = declRe.exec(content)) {
     add(match[1], false);
   }
