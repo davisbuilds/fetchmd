@@ -20,6 +20,7 @@ This roadmap is a lightweight planning snapshot, not a release contract.
 - Charset-aware response decoding (Content-Type → `<meta charset>` → UTF-8) so non-UTF-8 pages aren't mangled
 - Bounded-concurrency multi-input processing (up to 5 in parallel, output preserved in input order)
 - Warnings routed through the pipeline's stderr seam (source-labelled in multi-input, testable, deterministic under concurrency)
+- Robust render-timeout detection keyed off Puppeteer's `TimeoutError` name rather than fragile message matching
 
 ## Planned / Open Areas
 

@@ -41,16 +41,6 @@ Status: noted
 - **Sketch**: Move the canonical definition to `input.ts` (or a small
   `types.ts`) and import it in `cli.ts` and `pipeline.ts`.
 
-#### Robust render-timeout detection
-Status: noted
-- **What**: `render.ts` decides "did the navigation time out?" via
-  `err.message.includes("timeout")`.
-- **Why it matters**: Puppeteer throws a named `TimeoutError`; substring-matching
-  a message is fragile across Puppeteer versions and locales, and could
-  misclassify unrelated errors as timeouts (silently returning partial content).
-- **Sketch**: Check `err.name === "TimeoutError"` (or `instanceof TimeoutError`)
-  instead of the message text.
-
 #### Lazy stats computation
 Status: noted
 - **What**: `processOne` always calls `computeStats(markdown)`, re-splitting and

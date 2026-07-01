@@ -87,8 +87,12 @@ describe("renderHtml", () => {
     expect(mockPage.close).toHaveBeenCalled();
   });
 
-  it("falls back to partial content on timeout and reports via onWarn", async () => {
-    mockPage.goto.mockRejectedValue(new Error("Navigation timeout of 30000ms exceeded"));
+  it("falls back to partial content on a TimeoutError (by error name) and reports via onWarn", async () => {
+    // Puppeteer throws a named TimeoutError; the detection keys off the name,
+    // not the message text (which varies across versions/locales).
+    const timeoutErr = new Error("Waiting failed: 30000ms exceeded");
+    timeoutErr.name = "TimeoutError";
+    mockPage.goto.mockRejectedValue(timeoutErr);
     mockPage.content.mockResolvedValue("<html><body>partial</body></html>");
     const warnings: string[] = [];
 
@@ -99,6 +103,20 @@ describe("renderHtml", () => {
 
     expect(html).toBe("<html><body>partial</body></html>");
     expect(warnings).toContainEqual(expect.stringContaining("timed out"));
+  });
+
+  it("does not treat a non-timeout error as a timeout even if its message mentions 'timeout'", async () => {
+    // A connection error whose message coincidentally contains "timeout" must
+    // not trigger the partial-content fallback.
+    mockPage.goto.mockRejectedValue(new Error("net::ERR_CONNECTION_REFUSED (timeout)"));
+    mockPage.content.mockResolvedValue("<html><body>partial</body></html>");
+    const warnings: string[] = [];
+
+    const url = new URL("https://example.com");
+    await expect(
+      renderHtml(url, mockBrowser as never, { onWarn: (m) => warnings.push(m) }),
+    ).rejects.toThrow(RenderError);
+    expect(warnings).toEqual([]);
   });
 
   it("uses custom timeout when provided", async () => {
