@@ -3,7 +3,7 @@
 `fetchmd` is a Node.js CLI that converts HTML into clean markdown through a linear pipeline:
 
 1. Parse input modes (`url`, `--file`, or `stdin`) and flags (`--raw`, `--stats`, `--json`)
-2. For each input, resolve and load HTML
+2. For each input, resolve and load HTML (inputs are processed with bounded concurrency; output stays in input order)
 3. Extract primary article content (or skip with `--raw`)
 4. Convert HTML to markdown and compute stats
 5. Output: plain markdown to stdout, or structured JSON (`--json`)

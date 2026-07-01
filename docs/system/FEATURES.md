@@ -63,7 +63,7 @@ Stats are always included in JSON output regardless of `--stats` flag.
 
 ## Multi-Input Error Handling
 
-If one input fails in multi-input mode, the error is logged to stderr and processing continues with remaining inputs. Exit code is `1` if any input failed, `0` if all succeeded. If all inputs fail, the process exits with an error.
+Inputs are processed with bounded concurrency (up to 5 in parallel) to overlap network waits; results and error messages are still emitted in input order. If one input fails in multi-input mode, the error is logged to stderr and processing continues with remaining inputs. Exit code is `1` if any input failed, `0` if all succeeded. If all inputs fail, the process exits with an error.
 
 ## Render Mode
 
@@ -77,7 +77,7 @@ Behavior:
 - `--render` only applies to URL inputs; file and stdin inputs are unaffected
 - The browser waits for `networkidle2` (no more than 2 open connections for 500ms) before extracting HTML
 - Default render timeout is 30 seconds; on timeout, partial content is used if available
-- A single browser instance is shared across multiple URL inputs
+- A single browser instance is shared across multiple URL inputs, with up to 5 pages rendered concurrently
 - `--render` composes with all other flags (`--raw`, `--stats`, `--json`)
 
 Security: The initial URL is validated through SSRF checks. Browser-internal redirects and sub-resource requests are not intercepted. Only use `--render` with URLs you trust.
