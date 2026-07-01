@@ -64,8 +64,11 @@ function postProcess(md: string): string {
     .trimEnd()}\n`;
 }
 
+let service: TurndownService | undefined;
+
 export function toMarkdown(html: string): string {
-  const td = createTurndown();
-  const raw = td.turndown(html);
+  // The service is stateless across calls and reusable, so build it once.
+  service ??= createTurndown();
+  const raw = service.turndown(html);
   return postProcess(raw);
 }
