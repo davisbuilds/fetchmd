@@ -41,9 +41,50 @@ function mockRedirectFetch(chain: { status: number; location: string }[], final:
   };
 }
 
+// Returns a fetch that serves raw bytes (not UTF-8 re-encoded) so charset
+// handling can be exercised end to end.
+function mockBytesFetch(bytes: Uint8Array, contentType: string): typeof globalThis.fetch {
+  const body = bytes as BodyInit;
+  return async () => new Response(body, { status: 200, headers: { "content-type": contentType } });
+}
+
 const publicDns = async () => ({ address: "93.184.216.34" });
 
 describe("fetchHtml", () => {
+  it("decodes a non-UTF-8 body using the Content-Type charset", async () => {
+    // 0xE9 is "é" in ISO-8859-1, but an invalid lone byte in UTF-8.
+    const bytes = Uint8Array.from([
+      ...Buffer.from("<html><body>caf", "latin1"),
+      0xe9,
+      ...Buffer.from("</body></html>", "latin1"),
+    ]);
+    const html = await fetchHtml(new URL("https://example.com"), {
+      fetch: mockBytesFetch(bytes, "text/html; charset=iso-8859-1"),
+    });
+    expect(html).toContain("café");
+    expect(html).not.toContain("�");
+  });
+
+  it("falls back to a <meta charset> declaration when the header omits charset", async () => {
+    const bytes = Uint8Array.from([
+      ...Buffer.from('<html><head><meta charset="iso-8859-1"></head><body>caf', "latin1"),
+      0xe9,
+      ...Buffer.from("</body></html>", "latin1"),
+    ]);
+    const html = await fetchHtml(new URL("https://example.com"), {
+      fetch: mockBytesFetch(bytes, "text/html"),
+    });
+    expect(html).toContain("café");
+  });
+
+  it("falls back to UTF-8 for an unknown charset label", async () => {
+    const bytes = Uint8Array.from(Buffer.from("<html><body>hello</body></html>", "utf-8"));
+    const html = await fetchHtml(new URL("https://example.com"), {
+      fetch: mockBytesFetch(bytes, "text/html; charset=not-a-real-charset"),
+    });
+    expect(html).toContain("hello");
+  });
+
   it("fetches HTML successfully", async () => {
     const html = await fetchHtml(new URL("https://example.com"), {
       fetch: mockFetch({ body: "<html><body>Test</body></html>" }),

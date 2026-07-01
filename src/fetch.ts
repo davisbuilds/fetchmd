@@ -112,9 +112,33 @@ export async function fetchHtml(url: URL, options?: FetchOptions): Promise<strin
       chunks.push(value);
     }
 
-    const decoder = new TextDecoder();
-    return chunks.map((c) => decoder.decode(c, { stream: true })).join("") + decoder.decode();
+    const buffer = Buffer.concat(chunks);
+    const charset = parseCharset(contentType) ?? sniffMetaCharset(buffer) ?? "utf-8";
+    return decodeBuffer(buffer, charset);
   }
 
   throw new FetchError(`Too many redirects (>${maxRedirects})`);
+}
+
+// Extract a charset label from a Content-Type header value, if present.
+function parseCharset(contentType: string): string | undefined {
+  return /charset=["']?([^;"'\s]+)/i.exec(contentType)?.[1];
+}
+
+// Sniff a `<meta charset>` / `<meta http-equiv=content-type>` declaration from
+// the start of the document (ASCII-safe latin1 read) for pages that omit the
+// header charset.
+function sniffMetaCharset(buffer: Buffer): string | undefined {
+  const head = buffer.subarray(0, 1024).toString("latin1");
+  return /<meta[^>]+charset=["']?([^"'>\s;]+)/i.exec(head)?.[1];
+}
+
+// Decode bytes with the resolved charset, falling back to UTF-8 when the label
+// is unknown to the runtime's TextDecoder.
+function decodeBuffer(buffer: Buffer, charset: string): string {
+  try {
+    return new TextDecoder(charset).decode(buffer);
+  } catch {
+    return new TextDecoder("utf-8").decode(buffer);
+  }
 }
