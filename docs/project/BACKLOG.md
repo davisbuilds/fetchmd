@@ -17,30 +17,6 @@ This file stays future-only.
 
 ## Open
 
-#### Charset-aware decoding of fetched HTML
-Status: noted
-- **What**: `fetchHtml()` decodes every response with a default UTF-8
-  `TextDecoder` (`src/fetch.ts`). Pages served as `charset=ISO-8859-1`,
-  `Shift_JIS`, etc. are silently corrupted into mojibake.
-- **Why it matters**: Faithful text extraction is the tool's entire job;
-  non-UTF-8 pages (common outside English-language sites) come out garbled with
-  no warning.
-- **Sketch**: Parse `charset=` from the already-read `Content-Type` header
-  (`src/fetch.ts:88`) and pass it to `new TextDecoder(charset)`; fall back to a
-  `<meta charset>` sniff of the first chunk when the header is absent.
-
-#### Concurrent multi-input processing
-Status: noted
-- **What**: `pipeline.run()` awaits each input sequentially in a `for...of`
-  (`src/pipeline.ts`). Multiple URLs fetch back-to-back.
-- **Why it matters**: `fetchmd url1 url2 url3` — a documented headline use case —
-  pays the sum of all network round-trips instead of the max. Wall-clock time
-  scales linearly with input count.
-- **Sketch**: Bounded concurrency pool (e.g. 3–5) over `processOne`. The
-  `--render` path shares one browser but `render.ts` already opens a fresh
-  `browser.newPage()` per call, so per-page parallelism is safe there too.
-  Preserve input order in the results array.
-
 #### DNS-rebinding TOCTOU in SSRF validation
 Status: noted
 - **What**: `validateUrl()` resolves the hostname and checks the IP, but the
@@ -54,18 +30,6 @@ Status: noted
   `docs/system/ARCHITECTURE.md` security boundaries, or pin the connection to the
   validated IP (custom `undici` dispatcher / `lookup` that returns the
   already-validated address).
-
-#### Warnings bypass the injectable stderr seam
-Status: noted
-- **What**: `extract.ts` (readability-fallback warning) and `render.ts`
-  (partial-content warning) write directly to `process.stderr`, while
-  `pipeline.run()` accepts an injectable `options.stderr` used everywhere else.
-- **Why it matters**: Those warnings are untestable via the pipeline's stderr
-  seam and can't be routed/labelled in multi-input contexts, unlike the
-  per-input error messages the pipeline already prefixes with the source.
-- **Sketch**: Thread a stderr writer (or a warnings callback) through
-  `extractContent`/`renderHtml`, or return warnings to the caller for the
-  pipeline to emit.
 
 #### Deduplicate the `InputMode` type
 Status: noted

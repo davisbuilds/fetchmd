@@ -16,6 +16,10 @@ This roadmap is a lightweight planning snapshot, not a release contract.
 - `--json` structured output (metadata + markdown + stats)
 - Multi-input support (multiple URLs and `--file` flags)
 - `--render` mode for JS-rendered pages (headless browser via optional Puppeteer)
+- SSRF hardening: IPv4-mapped IPv6 literals decoded and re-checked against private-IP rules
+- Charset-aware response decoding (Content-Type → `<meta charset>` → UTF-8) so non-UTF-8 pages aren't mangled
+- Bounded-concurrency multi-input processing (up to 5 in parallel, output preserved in input order)
+- Warnings routed through the pipeline's stderr seam (source-labelled in multi-input, testable, deterministic under concurrency)
 
 ## Planned / Open Areas
 
