@@ -62,6 +62,6 @@
 
 - Allowed protocols: HTTPS only
 - Blocked hostname: `localhost`
-- Blocked IP ranges include loopback, private RFC1918, link-local, and IPv6 local ranges
-- DNS resolution is validated before fetch
+- Blocked IP ranges include loopback, private RFC1918, link-local, and IPv6 local ranges. IPv4-mapped IPv6 literals (e.g. `[::ffff:169.254.169.254]`, including the hex-compressed form) are decoded to their embedded IPv4 and re-checked against the private-IPv4 rules
+- DNS resolution is validated before fetch (note: re-resolution at connect time means DNS-rebinding TOCTOU is not fully mitigated — see `docs/project/BACKLOG.md`)
 - Response/input limits reduce resource-exhaustion risk

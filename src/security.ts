@@ -33,6 +33,33 @@ function isPrivateIPv4(ip: string): boolean {
   return false;
 }
 
+// Extract the embedded IPv4 from an IPv4-mapped/compatible IPv6 address
+// (e.g. "::ffff:127.0.0.1" or its hex-compressed form "::ffff:7f00:1").
+// Returns a dotted-quad string, or undefined if not a mapped address.
+function mappedIPv4(ip: string): string | undefined {
+  const normalized = ip.toLowerCase();
+  const prefix = normalized.startsWith("::ffff:")
+    ? "::ffff:"
+    : normalized.startsWith("::")
+      ? "::"
+      : undefined;
+  if (!prefix) return undefined;
+
+  const tail = normalized.slice(prefix.length);
+  // Dotted-quad tail: "::ffff:127.0.0.1"
+  if (isIPv4(tail)) return tail;
+  // Hex tail: "::ffff:7f00:1" -> two 16-bit groups -> four octets
+  const groups = tail.split(":");
+  if (groups.length !== 2) return undefined;
+  const octets: number[] = [];
+  for (const group of groups) {
+    if (!/^[0-9a-f]{1,4}$/.test(group)) return undefined;
+    const word = Number.parseInt(group, 16);
+    octets.push((word >> 8) & 0xff, word & 0xff);
+  }
+  return octets.join(".");
+}
+
 function isPrivateIPv6(ip: string): boolean {
   const normalized = ip.toLowerCase();
   // ::1 loopback
@@ -41,6 +68,10 @@ function isPrivateIPv6(ip: string): boolean {
   if (normalized.startsWith("fc") || normalized.startsWith("fd")) return true;
   // fe80::/10 (link-local)
   if (normalized.startsWith("fe80")) return true;
+
+  // IPv4-mapped/compatible addresses: check the embedded IPv4 against IPv4 rules
+  const embedded = mappedIPv4(normalized);
+  if (embedded && isPrivateIPv4(embedded)) return true;
 
   return false;
 }

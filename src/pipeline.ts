@@ -23,9 +23,8 @@ interface ResultRecord {
 }
 
 function sourceLabel(input: InputMode): string {
-  if (input.mode === "url") return input.value;
-  if (input.mode === "file") return input.value;
-  return "stdin";
+  if (input.mode === "stdin") return "stdin";
+  return input.value;
 }
 
 async function processOne(

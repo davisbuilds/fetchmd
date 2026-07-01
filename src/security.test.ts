@@ -54,6 +54,22 @@ describe("validateUrl", () => {
     await expect(validateUrl("https://[::1]")).rejects.toThrow(SecurityError);
   });
 
+  it("rejects IPv4-mapped IPv6 loopback [::ffff:127.0.0.1]", async () => {
+    await expect(validateUrl("https://[::ffff:127.0.0.1]")).rejects.toThrow(SecurityError);
+  });
+
+  it("rejects IPv4-mapped IPv6 link-local metadata [::ffff:169.254.169.254]", async () => {
+    await expect(validateUrl("https://[::ffff:169.254.169.254]")).rejects.toThrow(SecurityError);
+  });
+
+  it("rejects IPv4-mapped IPv6 private range [::ffff:10.0.0.1]", async () => {
+    await expect(validateUrl("https://[::ffff:10.0.0.1]")).rejects.toThrow(SecurityError);
+  });
+
+  it("rejects hex-compressed IPv4-mapped IPv6 [::ffff:a9fe:a9fe]", async () => {
+    await expect(validateUrl("https://[::ffff:a9fe:a9fe]")).rejects.toThrow(SecurityError);
+  });
+
   it("rejects hostnames that resolve to private IPs", async () => {
     const privateDns = async () => ({ address: "192.168.1.100" });
     await expect(
