@@ -7,7 +7,11 @@ export interface ExtractResult {
   excerpt?: string;
 }
 
-export function extractContent(html: string, url?: string): ExtractResult {
+export function extractContent(
+  html: string,
+  url?: string,
+  onWarn?: (message: string) => void,
+): ExtractResult {
   if (!html || html.trim().length === 0) {
     throw new Error("Cannot extract content from empty HTML.");
   }
@@ -28,12 +32,12 @@ export function extractContent(html: string, url?: string): ExtractResult {
 
   // Fallback: use body content
   const body = doc.body;
-  if (!body || !body.innerHTML.trim()) {
+  if (!body?.innerHTML.trim()) {
     throw new Error("No extractable content found in HTML.");
   }
 
   const title = doc.title || "";
-  process.stderr.write("Warning: readability extraction failed, using full body\n");
+  onWarn?.("readability extraction failed, using full body");
 
   return {
     title,

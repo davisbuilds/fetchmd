@@ -14,6 +14,7 @@ export interface InputOptions {
   render?: boolean;
   browser?: Browser;
   renderOptions?: RenderOptions;
+  onWarn?: (message: string) => void;
 }
 
 export type InputMode =
@@ -44,7 +45,10 @@ export async function resolveInput(input: InputMode, options?: InputOptions): Pr
     case "url": {
       const url = await validateUrl(input.value, { dnsLookup: options?.dnsLookup });
       if (options?.render && options.browser) {
-        html = await renderHtml(url, options.browser, options.renderOptions);
+        html = await renderHtml(url, options.browser, {
+          ...options.renderOptions,
+          onWarn: options.onWarn,
+        });
       } else {
         const fetchOpts: FetchOptions = {
           fetch: options?.fetch,

@@ -28,6 +28,7 @@ interface ResultRecord {
   excerpt?: string;
   markdown: string;
   stats: Stats;
+  warnings: string[];
 }
 
 function sourceLabel(input: InputMode): string {
@@ -40,8 +41,13 @@ async function processOne(
   raw: boolean,
   inputOpts: InputOptions,
 ): Promise<ResultRecord> {
-  const html = await resolveInput(input, inputOpts);
   const source = sourceLabel(input);
+  // Collect warnings per input so the pipeline can emit them in order (rather
+  // than racing to process.stderr under concurrency).
+  const warnings: string[] = [];
+  const onWarn = (message: string) => warnings.push(message);
+
+  const html = await resolveInput(input, { ...inputOpts, onWarn });
 
   let markdown: string;
   let title = "";
@@ -51,14 +57,14 @@ async function processOne(
     markdown = toMarkdown(html);
   } else {
     const urlHint = input.mode === "url" ? input.value : undefined;
-    const extracted = extractContent(html, urlHint);
+    const extracted = extractContent(html, urlHint, onWarn);
     const converted = toMarkdown(extracted.content);
     title = extracted.title || "";
     excerpt = extracted.excerpt;
     markdown = title ? `# ${title}\n\n${converted}` : converted;
   }
 
-  return { source, title, excerpt, markdown, stats: computeStats(markdown) };
+  return { source, title, excerpt, markdown, stats: computeStats(markdown), warnings };
 }
 
 export async function run(
@@ -104,10 +110,19 @@ export async function run(
       },
     );
 
-    // Emit results and errors in original input order for deterministic output.
+    // Emit results, warnings, and errors in original input order for
+    // deterministic output.
+    const multiInput = inputs.length > 1;
     for (const outcome of settled) {
       if (outcome.ok) {
         results.push(outcome.result);
+        for (const warning of outcome.result.warnings) {
+          stderr.write(
+            multiInput
+              ? `${outcome.result.source}: Warning: ${warning}\n`
+              : `Warning: ${warning}\n`,
+          );
+        }
       } else {
         hasErrors = true;
         stderr.write(`Error processing ${outcome.source}: ${outcome.message}\n`);
