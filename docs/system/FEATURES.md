@@ -90,6 +90,7 @@ Security: The initial URL is validated through SSRF checks. Browser-internal red
 - Empty links are stripped
 - Tracking/decorative pixel images are stripped
 - Output is normalized to avoid excess blank lines and ends with a single newline
+- Fetched responses are decoded using the `Content-Type` charset, falling back to a `<meta charset>` declaration and then UTF-8, so non-UTF-8 pages (e.g. ISO-8859-1, Shift_JIS) are not mangled
 
 ## Operational Limits
 
