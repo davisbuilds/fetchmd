@@ -58,7 +58,7 @@ Jobs:
 - Lint/dead-code: `pnpm lint`, `pnpm test:dead-code`
 - Build/test: `pnpm build`, `pnpm test`
 
-CI uses Node.js 24 and pnpm 10.15.0.
+CI uses Node.js 24 and installs pnpm via `pnpm/action-setup` (version derived from the `packageManager` field in `package.json`).
 
 ## Packaging and Publish Readiness
 
