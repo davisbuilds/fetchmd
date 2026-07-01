@@ -87,18 +87,18 @@ describe("renderHtml", () => {
     expect(mockPage.close).toHaveBeenCalled();
   });
 
-  it("falls back to partial content on timeout", async () => {
-    const stderrWrite = vi.spyOn(process.stderr, "write").mockReturnValue(true);
+  it("falls back to partial content on timeout and reports via onWarn", async () => {
     mockPage.goto.mockRejectedValue(new Error("Navigation timeout of 30000ms exceeded"));
     mockPage.content.mockResolvedValue("<html><body>partial</body></html>");
+    const warnings: string[] = [];
 
     const url = new URL("https://example.com");
-    const html = await renderHtml(url, mockBrowser as never);
+    const html = await renderHtml(url, mockBrowser as never, {
+      onWarn: (m) => warnings.push(m),
+    });
 
     expect(html).toBe("<html><body>partial</body></html>");
-    expect(stderrWrite).toHaveBeenCalledWith(expect.stringContaining("timed out"));
-
-    stderrWrite.mockRestore();
+    expect(warnings).toContainEqual(expect.stringContaining("timed out"));
   });
 
   it("uses custom timeout when provided", async () => {

@@ -63,7 +63,7 @@ Stats are always included in JSON output regardless of `--stats` flag.
 
 ## Multi-Input Error Handling
 
-Inputs are processed with bounded concurrency (up to 5 in parallel) to overlap network waits; results and error messages are still emitted in input order. If one input fails in multi-input mode, the error is logged to stderr and processing continues with remaining inputs. Exit code is `1` if any input failed, `0` if all succeeded. If all inputs fail, the process exits with an error.
+Inputs are processed with bounded concurrency (up to 5 in parallel) to overlap network waits; results, warnings, and error messages are still emitted in input order. Non-fatal warnings (e.g. readability fallback, render-timeout partial content) are routed to stderr and prefixed with the input source in multi-input mode. If one input fails in multi-input mode, the error is logged to stderr and processing continues with remaining inputs. Exit code is `1` if any input failed, `0` if all succeeded. If all inputs fail, the process exits with an error.
 
 ## Render Mode
 

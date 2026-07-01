@@ -33,6 +33,7 @@ export async function createBrowser(puppeteer: PuppeteerModule): Promise<Browser
 
 export interface RenderOptions {
   timeoutMs?: number;
+  onWarn?: (message: string) => void;
 }
 
 export async function renderHtml(
@@ -55,9 +56,7 @@ export async function renderHtml(
       if (err instanceof Error && err.message.includes("timeout")) {
         const partial = await page.content();
         if (partial && partial.trim().length > 0) {
-          process.stderr.write(
-            `Warning: render timed out after ${timeoutMs}ms, using partial content\n`,
-          );
+          options?.onWarn?.(`render timed out after ${timeoutMs}ms, using partial content`);
           return partial;
         }
       }

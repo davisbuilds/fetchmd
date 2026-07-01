@@ -25,6 +25,13 @@ describe("extractContent", () => {
     expect(result.content).toBeTruthy();
   });
 
+  it("reports the readability fallback via onWarn instead of stderr", () => {
+    const warnings: string[] = [];
+    // The SPA shell has no article structure, forcing the full-body fallback.
+    extractContent(fixture("spa-shell.html"), undefined, (m) => warnings.push(m));
+    expect(warnings).toContainEqual(expect.stringContaining("readability"));
+  });
+
   it("throws on empty HTML", () => {
     expect(() => extractContent("")).toThrow("empty HTML");
   });

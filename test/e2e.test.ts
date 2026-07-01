@@ -61,6 +61,13 @@ describe("e2e: --file mode", () => {
     expect(code).not.toBe(0);
     expect(stderr).toBeTruthy();
   });
+
+  it("emits an unlabelled readability-fallback warning for a single input", async () => {
+    const { stderr, code } = await run(["--file", `${FIXTURES}/spa-shell.html`]);
+    expect(code).toBe(0);
+    expect(stderr).toContain("Warning: readability");
+    expect(stderr).not.toContain("spa-shell.html: Warning");
+  });
 });
 
 describe("e2e: stdin mode", () => {
@@ -186,6 +193,17 @@ describe("e2e: multi-input mode", () => {
     expect(code).not.toBe(0);
     expect(stdout).toContain("How to Build a CLI Tool");
     expect(stderr).toContain("/nonexistent/path.html");
+  });
+
+  it("labels the readability-fallback warning with its source in multi-input", async () => {
+    const { stderr, code } = await run([
+      "--file", `${FIXTURES}/blog-article.html`,
+      "--file", `${FIXTURES}/spa-shell.html`,
+    ]);
+    expect(code).toBe(0);
+    // spa-shell has no article structure, so it falls back and warns; the
+    // warning is labelled with the source in multi-input mode.
+    expect(stderr).toContain("spa-shell.html: Warning: readability");
   });
 });
 
