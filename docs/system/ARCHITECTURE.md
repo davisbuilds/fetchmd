@@ -22,10 +22,11 @@
 
 - `src/index.ts`: process entrypoint, EPIPE handling, top-level error handling
 - `src/pipeline.ts`: orchestrates parse -> input(s) -> extract -> convert -> output (plain or JSON)
+- `src/pool.ts`: bounded-concurrency, order-preserving async map used to process multiple inputs in parallel
 - `src/cli.ts`: argument parsing, multi-input collection, and flag handling
 - `src/input.ts`: URL/file/stdin input resolution with 5MB limit
 - `src/security.ts`: URL protocol + DNS/IP SSRF validation
-- `src/fetch.ts`: HTTPS fetch with timeout, size limit, manual redirects
+- `src/fetch.ts`: HTTPS fetch with timeout, size limit, manual redirects, and charset-aware decoding
 - `src/extract.ts`: Readability extraction with body fallback
 - `src/convert.ts`: HTML-to-markdown transformation and post-processing
 - `src/render.ts`: headless browser rendering with Puppeteer (optional dependency)
