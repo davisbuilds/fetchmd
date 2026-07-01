@@ -10,9 +10,9 @@ Pipeline: parse input(s) → resolve HTML → extract primary content → conver
 - `docs/system/FEATURES.md` — full CLI surface and flags, input rules, JSON output schema, multi-input error handling, `--render` mode (Puppeteer behavior + security caveats), conversion behavior, operational limits, exit codes.
 - `docs/system/OPERATIONS.md` — prerequisites, install, daily commands, local CLI usage, testing notes (build-first for e2e), `prepublishOnly` flow, troubleshooting matrix.
 - `docs/project/ROADMAP.md` — shipped highlights and open items (perf benchmarks, npm publish).
-- `docs/project/GIT_HISTORY_POLICY.md` — squash-merge-only policy.
+- `docs/project/GIT_HISTORY_POLICY.md` — merge-commit/rebase policy (squash disabled) and branch hygiene.
 - `docs/plans/` — historical brainstorm and implementation plans.
-- `skills/SKILL.md` — operator reference for using fetchmd as a tool inside agent workflows (install, invoke, parse output).
+- `skills/fetchmd/SKILL.md` — operator reference for using fetchmd as a tool inside agent workflows (install, invoke, parse output).
 
 ## Command Quickstart
 
