@@ -4,8 +4,16 @@ import { type InputMode, parseArgs } from "./cli.js";
 import { toMarkdown } from "./convert.js";
 import { extractContent } from "./extract.js";
 import { type InputOptions, resolveInput } from "./input.js";
+import { mapWithConcurrency } from "./pool.js";
 import { createBrowser, loadPuppeteer } from "./render.js";
 import { computeStats, formatStats, type Stats } from "./stats.js";
+
+// Max inputs processed in parallel. Bounds fan-out against target servers and
+// (in --render mode) concurrent browser pages while still overlapping network
+// waits for the common multi-URL case.
+const CONCURRENCY = 5;
+
+type Settled = { ok: true; result: ResultRecord } | { ok: false; source: string; message: string };
 
 export interface PipelineOptions {
   fetch?: typeof globalThis.fetch;
@@ -81,14 +89,28 @@ export async function run(
   let hasErrors = false;
 
   try {
-    for (const input of inputs) {
-      try {
-        const result = await processOne(input, raw, inputOpts);
-        results.push(result);
-      } catch (err) {
+    // Process inputs with bounded concurrency; each task captures its own
+    // failure so the pool never rejects and ordering is preserved.
+    const settled = await mapWithConcurrency<InputMode, Settled>(
+      inputs,
+      CONCURRENCY,
+      async (input) => {
+        try {
+          return { ok: true, result: await processOne(input, raw, inputOpts) };
+        } catch (err) {
+          const message = err instanceof Error ? err.message : String(err);
+          return { ok: false, source: sourceLabel(input), message };
+        }
+      },
+    );
+
+    // Emit results and errors in original input order for deterministic output.
+    for (const outcome of settled) {
+      if (outcome.ok) {
+        results.push(outcome.result);
+      } else {
         hasErrors = true;
-        const msg = err instanceof Error ? err.message : String(err);
-        stderr.write(`Error processing ${sourceLabel(input)}: ${msg}\n`);
+        stderr.write(`Error processing ${outcome.source}: ${outcome.message}\n`);
       }
     }
   } finally {
