@@ -4,6 +4,11 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    # pnpm 11's default supply-chain policy (minimumReleaseAge 24h) rejects
+    # packages younger than a day; without a cooldown Dependabot bumps to
+    # versions the moment they publish and CI fails the lockfile check.
+    cooldown:
+      default-days: 2
     groups:
       minor-and-patch:
         applies-to: version-updates
