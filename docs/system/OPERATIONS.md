@@ -62,7 +62,7 @@ CI uses Node.js 24 and installs pnpm via `pnpm/action-setup` (version derived fr
 
 ## Packaging and Publish Readiness
 
-`prepublishOnly` runs `pnpm run check` (`lint + test + build`).
+`prepublishOnly` runs `pnpm run check` (`lint + build + test`).
 
 Before publishing:
 
