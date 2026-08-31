@@ -43,15 +43,6 @@ to a trigger, or move completed decisions and work to the Roadmap or decision hi
   validated IP (custom `undici` dispatcher / `lookup` that returns the
   already-validated address).
 
-### Deduplicate the `InputMode` type
-- **What**: `InputMode` is declared twice — `src/cli.ts` and `src/input.ts` —
-  with a cosmetic divergence (cli's stdin arm has `value?: undefined`, input's
-  doesn't). `pipeline.ts` imports it from `cli.js`.
-- **Why it matters**: Two sources of truth for a core discriminated union invite
-  drift as input modes are added.
-- **Next**: Move the canonical definition to `input.ts` (or a small
-  `types.ts`) and import it in `cli.ts` and `pipeline.ts`.
-
 ### Lazy stats computation
 - **What**: `processOne` always calls `computeStats(markdown)`, re-splitting and
   re-measuring the whole output even when neither `--stats` nor `--json` is set.

@@ -21,6 +21,7 @@ This roadmap is a lightweight planning snapshot, not a release contract.
 - Bounded-concurrency multi-input processing (up to 5 in parallel, output preserved in input order)
 - Warnings routed through the pipeline's stderr seam (source-labelled in multi-input, testable, deterministic under concurrency)
 - Robust render-timeout detection keyed off Puppeteer's `TimeoutError` name rather than fragile message matching
+- Single canonical `InputMode` discriminated union in `input.ts`, imported by `cli.ts` and `pipeline.ts` (removed the duplicate declaration and its cosmetic divergence)
 
 ## Planned / Open Areas
 

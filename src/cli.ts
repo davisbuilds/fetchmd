@@ -1,13 +1,9 @@
 import { createRequire } from "node:module";
 import { Command } from "commander";
+import type { InputMode } from "./input.js";
 
 const require = createRequire(import.meta.url);
 const pkg = require("../package.json");
-
-export type InputMode =
-  | { mode: "url"; value: string }
-  | { mode: "stdin"; value?: undefined }
-  | { mode: "file"; value: string };
 
 export interface CliResult {
   inputs: InputMode[];

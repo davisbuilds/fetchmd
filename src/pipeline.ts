@@ -1,9 +1,9 @@
 import type { Writable } from "node:stream";
 import type { Browser } from "puppeteer";
-import { type InputMode, parseArgs } from "./cli.js";
+import { parseArgs } from "./cli.js";
 import { toMarkdown } from "./convert.js";
 import { extractContent } from "./extract.js";
-import { type InputOptions, resolveInput } from "./input.js";
+import { type InputMode, type InputOptions, resolveInput } from "./input.js";
 import { mapWithConcurrency } from "./pool.js";
 import { createBrowser, loadPuppeteer } from "./render.js";
 import { computeStats, formatStats, type Stats } from "./stats.js";
