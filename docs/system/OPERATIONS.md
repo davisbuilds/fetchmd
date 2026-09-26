@@ -68,8 +68,10 @@ package version, release manifest, newest changelog entry, and built CLI version
 Release Please maintains a release PR with updates to `package.json`,
 `.release-please-manifest.json`, and `CHANGELOG.md`. After that PR passes CI and a
 maintainer merges it, successful main CI permits a `vX.Y.Z` tag and GitHub release.
-The release workflow checks that current main still matches the successful CI
-revision. If main advances, it waits for that revision's successful CI instead.
+Before running Release Please, the workflow checks that main still matches the
+successful CI revision. An observed mismatch skips the run. This is a
+point-in-time preflight, not a lock: a push between the check and Release Please's
+API reads can advance main. Review the release PR and its CI before merging.
 Merge commits and rebase merges remain supported. No auto-merge is configured.
 
 Activation requires a GitHub App installed on this repository with Contents,
