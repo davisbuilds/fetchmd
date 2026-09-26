@@ -1,6 +1,8 @@
 # Roadmap
 
-This roadmap is a lightweight planning snapshot, not a release contract.
+This roadmap records direction and upcoming milestones, with selected highlights
+for orientation. Released consumer-facing changes live in `CHANGELOG.md`;
+actionable unresolved gaps live in `BACKLOG.md`. This is not a release contract.
 
 ## Completed Highlights
 
@@ -22,11 +24,12 @@ This roadmap is a lightweight planning snapshot, not a release contract.
 - Warnings routed through the pipeline's stderr seam (source-labelled in multi-input, testable, deterministic under concurrency)
 - Robust render-timeout detection keyed off Puppeteer's `TimeoutError` name rather than fragile message matching
 - Single canonical `InputMode` discriminated union in `input.ts`, imported by `cli.ts` and `pipeline.ts` (removed the duplicate declaration and its cosmetic divergence)
+- npm package `@davisbuilds/fetchmd` available at `0.1.0` (registry verified 2026-09-26)
+- Release Please automation for version/changelog PRs and GitHub releases after validated main CI; activation requires the release GitHub App
 
 ## Planned / Open Areas
 
 - Performance benchmark suite and regression thresholds
-- npm publish
 
 ## Active Planning Docs
 
