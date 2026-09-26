@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -279,9 +280,10 @@ describe("e2e: error cases", () => {
     expect(stdout).toContain("Usage:");
   });
 
-  it("--version exits 0", async () => {
+  it("--version reports the package version", async () => {
     const { stdout, code } = await run(["--version"]);
+    const pkg = JSON.parse(readFileSync(resolve(import.meta.dirname, "../package.json"), "utf8"));
     expect(code).toBe(0);
-    expect(stdout).toMatch(/\d+\.\d+\.\d+/);
+    expect(stdout.trim()).toBe(pkg.version);
   });
 });

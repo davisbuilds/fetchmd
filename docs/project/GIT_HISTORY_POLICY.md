@@ -1,6 +1,6 @@
 # Git History and Branch Hygiene
 
-Last updated: May 11, 2026
+Last updated: September 26, 2026
 
 ## Repository Merge Settings
 
@@ -43,10 +43,45 @@ Merge commits and rebase merges are both allowed; squash merges are disabled.
 
 ## Commit Hygiene
 
-- Use concise, imperative commit messages.
+- Use concise, imperative Conventional Commit subjects, including bot commits.
 - Keep commits coherent and reviewable (avoid mixed refactor + behavior + docs when possible).
 - Because squash is disabled, individual commits land in `main` — no WIP markers, no fixup chains.
 - Avoid force-pushing shared branches unless explicitly coordinated.
+
+## Release Classification
+
+CI checks the subjects of every non-merge PR commit, rather than only the PR
+title, because individual commits are preserved. Use `type(scope): description`
+(scope optional). Reword Git-generated revert subjects to `revert: ...`. The
+guard checks formatting, not whether the category truthfully describes the diff;
+reviewers still own that judgment. PRs above 250 commits must be split because
+GitHub's PR commit endpoint is capped at 250.
+
+| Commit | Release effect |
+| --- | --- |
+| `fix:` or `perf:` | Patch |
+| `feat:` | Minor |
+| Any category with `!` or a `BREAKING CHANGE:` footer | Minor before 1.0; major from 1.0 onward |
+| `docs:`, `test:`, `chore:`, `build:`, `ci:`, `style:`, `refactor:` without a breaking marker | No release by themselves |
+| `revert:` | Patch, with a Reverts changelog section; use `revert!:` if incompatible |
+
+Feature commits remain minor bumps before 1.0; breaking changes do not silently
+promote a 0.x release to 1.0. A deliberate 1.0 promotion requires a reviewed
+release decision. Plain commit subjects are rejected rather than silently omitted
+from release consideration. Neither squash merging nor conventional merge-node
+subjects are required.
+
+Use `fix(deps):` for runtime dependency fixes, including security updates, that
+consumers need in a release. Reserve `chore(deps):` for maintenance without a
+consumer-facing fix, such as development tooling updates. CI checks subject
+syntax; reviewers must verify that dependency changes receive the right category.
+
+Release Please owns version/changelog updates in a dedicated PR. Review its
+version and consumer-facing notes, run the normal checks, then merge using the
+existing merge-commit or rebase policy. Successful CI on that exact main revision
+permits the GitHub release. See the
+[operations guide](../system/OPERATIONS.md#releases) for App activation and the
+npm publication boundary.
 
 ## Validation Gate
 
