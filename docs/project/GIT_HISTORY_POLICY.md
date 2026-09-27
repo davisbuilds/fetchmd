@@ -1,6 +1,6 @@
 # Git History and Branch Hygiene
 
-Last updated: September 26, 2026
+Last updated: September 27, 2026
 
 ## Repository Merge Settings
 
@@ -54,7 +54,13 @@ Re-query current protection before delivery.
 ## Release Classification
 
 CI checks the subjects of every non-merge PR commit, rather than only the PR
-title, because individual commits are preserved. Use `type(scope): description`
+title, because individual commits are preserved. Main-push CI fetches complete
+Git history and checks every unreleased non-merge commit from the real manifest
+version tag, or the configured bootstrap commit when that tag is absent. Earlier
+failed main pushes remain covered; a later valid push cannot hide an unclassified
+commit. Pushes must preserve existing ancestry. Missing references or a baseline
+outside the tested head's ancestry fail closed. Accumulated release history has
+no 250-commit cap; the per-PR API limit below remains. Use `type(scope): description`
 (scope optional). Reword Git-generated revert subjects to `revert: ...`. The
 guard checks formatting, not whether the category truthfully describes the diff;
 reviewers still own that judgment. PRs above 250 commits must be split because

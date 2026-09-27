@@ -62,6 +62,8 @@ Jobs:
 CI uses Node.js 24 and installs pnpm via `pnpm/action-setup` (version derived from the `packageManager` field in `package.json`).
 Installs use `pnpm install --frozen-lockfile`. Build/test also checks that the
 package version, release manifest, newest changelog entry, and built CLI version agree.
+The commit category job tests its validator on every run; `pnpm check` also runs
+`pnpm test:release-commits` for real Git release-history regression coverage.
 
 ## Releases
 
@@ -73,6 +75,14 @@ successful CI revision. An observed mismatch skips the run. This is a
 point-in-time preflight, not a lock: a push between the check and Release Please's
 API reads can advance main. Review the release PR and its CI before merging.
 Merge commits and rebase merges remain supported. No auto-merge is configured.
+
+PR category checks cover their own commits. Main-push checks additionally enforce
+current-push ancestry and validate the complete unreleased window from the real
+`v<manifest version>` tag (annotated or lightweight) to the tested head. When that
+tag is absent, the configured bootstrap is the conservative fallback, including
+after a release PR bumps the manifest and before its tag exists. CI fetches full
+history; an earlier failed main push stays in scope after later valid pushes.
+There is no 250-commit cap on accumulated release history.
 
 Activation requires a GitHub App installed on this repository with Contents,
 Issues, and Pull requests read/write permissions. Set repository Actions variable
@@ -94,6 +104,14 @@ Commit categories and version policy are in the
 Before merging a release PR, review its version, notes, and breaking changes and
 check CI. The first release PR also verifies the App-to-CI path in GitHub; local
 checks cannot prove installation permissions or remote event delivery.
+
+If an unclassified commit has already landed on main, later pushes remain
+blocked. Stop the release writer and make an explicit maintainer recovery
+decision covering compatibility intent, version impact, and release notes. Do
+not silently rewrite published history or manufacture a baseline tag. Any
+necessary baseline adjustment requires a reviewed decision explaining how
+omitted changes are accounted for, then validation of remaining history before
+resuming releases.
 
 ## Packaging and Publish Readiness
 
