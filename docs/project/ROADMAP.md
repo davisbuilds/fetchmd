@@ -26,6 +26,7 @@ actionable unresolved gaps live in `BACKLOG.md`. This is not a release contract.
 - Single canonical `InputMode` discriminated union in `input.ts`, imported by `cli.ts` and `pipeline.ts` (removed the duplicate declaration and its cosmetic divergence)
 - npm package `@davisbuilds/fetchmd` available at `0.1.0` (registry verified 2026-09-26)
 - Release Please automation for version/changelog PRs and GitHub releases after validated main CI; activation requires the release GitHub App
+- Release classification gate covers complete unreleased history and direct-push ancestry, retaining earlier failed main pushes until classified maintainer recovery
 
 ## Planned / Open Areas
 
