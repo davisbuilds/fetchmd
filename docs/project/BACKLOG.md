@@ -1,32 +1,10 @@
 # Backlog
 
-Living list of future design gaps, tech debt, and better ways to do a thing noticed
-during normal execution. Fix simple, quick, or blocking issues inline; capture only
-durable follow-ups worth revisiting cold. Add an item only when it cannot be fixed inline
-and represents recurring friction, meaningful risk or cost, an unresolved decision, or a
-concrete trigger. This is not a release contract; `docs/project/ROADMAP.md` is the
-higher-bar shipped/in-progress view.
-
-This repository is the canonical owner for its follow-ups; cross-repository work belongs
-with the repository that owns the capability, with links from affected repositories only
-when useful. Date and source volatile external or runtime claims, or label them a
-hypothesis.
-
-Convention: each item has **What** (the friction), **Why or evidence**, and
-optionally **Next** (the smallest action that makes it actionable) or **Revisit
-when** (an intentional external or measurable gate). Default state is omitted; use
-**Revisit when** for gates and `State: blocked — <reason>` only when work is genuinely
-blocked externally.
-
-When an item ships, remove it from this doc and record it as a concise completed
-highlight in `docs/project/ROADMAP.md` instead of keeping a shipped note here.
-This file stays future-only.
-
-Review this file after a significant shipped slice or at least quarterly: confirm each
-item is still open, refresh dated evidence, promote selected work to a plan, convert it
-to a trigger, or move completed decisions and work to the Roadmap or decision history.
-
----
+Future-only gaps and opportunities worth revisiting. Agents can work directly
+from an entry; use an issue when discussion or coordination helps. Keep one
+detailed owner and reconcile affected entries when work lands. Date/source
+volatile claims or label hypotheses; keep cross-repository detail with the
+capability owner.
 
 ## Open
 
@@ -38,10 +16,10 @@ to a trigger, or move completed decisions and work to the Roadmap or decision hi
 - **Why it matters**: The documented SSRF posture implies per-hop validation is
   sufficient; against an active DNS-rebinding attacker it is not. Inherent to
   Node's `fetch`, so this is a "known gap," not a quick patch.
-- **Next**: Either document the limitation explicitly in
-  `docs/system/ARCHITECTURE.md` security boundaries, or pin the connection to the
-  validated IP (custom `undici` dispatcher / `lookup` that returns the
-  already-validated address).
+- **Next**: Decide whether to pin the connection to the validated IP (for
+  example, with a custom dispatcher), then test that connection against a DNS
+  change. The limitation is already documented in
+  `docs/system/ARCHITECTURE.md`.
 
 ### Lazy stats computation
 - **What**: `processOne` always calls `computeStats(markdown)`, re-splitting and
@@ -57,3 +35,12 @@ to a trigger, or move completed decisions and work to the Roadmap or decision hi
   currently an implicit omission rather than a recorded decision.
 - **Next**: Either enforce a cap on rendered HTML length or add an explicit
   note to the security caveats in `docs/system/FEATURES.md` so it's a choice.
+
+### Performance baselines
+
+- **What**: establish a repeatable benchmark and useful regression thresholds for
+  the fetch/convert pipeline.
+- **Why or evidence**: the earlier Roadmap named this as planned work, but no
+  benchmark contract or threshold is selected here.
+- **Next**: choose representative local HTML and network cases, measure current
+  behavior, then set thresholds only where variance supports them.

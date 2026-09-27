@@ -1,39 +1,19 @@
 # Roadmap
 
-This roadmap records direction and upcoming milestones, with selected highlights
-for orientation. Released consumer-facing changes live in `CHANGELOG.md`;
-actionable unresolved gaps live in `BACKLOG.md`. This is not a release contract.
+fetchmd converts HTTPS pages or local HTML into Markdown for agent workflows.
+The current direction is a predictable CLI with bounded fetching, clear warnings,
+and stable plain/JSON output. [Features](../system/FEATURES.md) owns observable
+behavior; [Architecture](../system/ARCHITECTURE.md#security-boundaries) owns the
+security limits of ordinary fetch and trusted-input `--render`.
 
-## Completed Highlights
+## Current Direction
 
-- CLI input modes: URL, `--file`, and stdin
-- Secure URL validation with HTTPS-only + private-network SSRF blocking
-- Manual redirect handling with re-validation per hop
-- Resource controls: timeout, max response size, max redirects
-- Content extraction with Readability and fallback strategy
-- Markdown conversion with GFM support and cleanup rules
-- Unit and end-to-end test coverage across parsing, security, fetching, extraction, and conversion
-- `--raw` mode (skip Readability and convert full HTML)
-- `--stats` flag (word count, token estimate, output size to stderr)
-- `--json` structured output (metadata + markdown + stats)
-- Multi-input support (multiple URLs and `--file` flags)
-- `--render` mode for JS-rendered pages (headless browser via optional Puppeteer)
-- SSRF hardening: IPv4-mapped IPv6 literals decoded and re-checked against private-IP rules
-- Charset-aware response decoding (Content-Type → `<meta charset>` → UTF-8) so non-UTF-8 pages aren't mangled
-- Bounded-concurrency multi-input processing (up to 5 in parallel, output preserved in input order)
-- Warnings routed through the pipeline's stderr seam (source-labelled in multi-input, testable, deterministic under concurrency)
-- Robust render-timeout detection keyed off Puppeteer's `TimeoutError` name rather than fragile message matching
-- Single canonical `InputMode` discriminated union in `input.ts`, imported by `cli.ts` and `pipeline.ts` (removed the duplicate declaration and its cosmetic divergence)
-- npm package `@davisbuilds/fetchmd` available at `0.1.0` (registry verified 2026-09-26)
-- Release Please automation for version/changelog PRs and GitHub releases after validated main CI; activation requires the release GitHub App
-- Release classification gate covers complete unreleased history and direct-push ancestry, retaining earlier failed main pushes until classified maintainer recovery
+Keep fetch and conversion behavior portable for CLI and agent consumers. Preserve
+HTTPS validation, redirect checks, resource limits, and ordered multi-input results
+when changing the pipeline. Resource and SSRF limitations that remain unresolved
+are recorded in the [Backlog](BACKLOG.md), where work can be selected directly.
 
-## Planned / Open Areas
-
-- Performance benchmark suite and regression thresholds
-
-## Active Planning Docs
-
-- `docs/plans/2026-02-25-fetchmd-brainstorm.md`
-- `docs/plans/2026-02-25-fetchmd-implementation.md`
-- `docs/plans/2026-02-26-json-and-multi-url-plan.md`
+The npm package and GitHub source releases have separate publication paths; see
+[Operations](../system/OPERATIONS.md#releases). Released consumer changes belong
+in [CHANGELOG.md](../../CHANGELOG.md), with routine implementation detail in Git.
+No next feature or release date is committed here.
