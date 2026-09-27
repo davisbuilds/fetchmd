@@ -82,7 +82,9 @@ current-push ancestry and validate the complete unreleased window from the real
 tag is absent, the configured bootstrap is the conservative fallback, including
 after a release PR bumps the manifest and before its tag exists. CI fetches full
 history; an earlier failed main push stays in scope after later valid pushes.
-There is no 250-commit cap on accumulated release history.
+There is no 250-commit cap on accumulated release history. Manifest versions
+must be valid SemVer 2.0.0 strings; malformed versions fail instead of selecting
+the bootstrap fallback.
 
 Activation requires a GitHub App installed on this repository with Contents,
 Issues, and Pull requests read/write permissions. Set repository Actions variable
