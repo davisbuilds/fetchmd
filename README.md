@@ -117,12 +117,12 @@ redirects are not intercepted. Only use `--render` with URLs you trust.
 src/              CLI source, extractors, renderers, and tests
 dist/             compiled package output
 skills/           agent skill wrapper for fetchmd usage
-docs/             system, project, and plan docs
+docs/             system and project docs
 ```
 
 ## Documentation
 
-- Agent skill operator reference: [skills/SKILL.md](skills/SKILL.md)
+- Agent skill operator reference: [skills/fetchmd/SKILL.md](skills/fetchmd/SKILL.md)
 - Agent implementation guidance: [AGENTS.md](AGENTS.md)
 - Architecture: [docs/system/ARCHITECTURE.md](docs/system/ARCHITECTURE.md)
 - Features and CLI behavior: [docs/system/FEATURES.md](docs/system/FEATURES.md)
@@ -140,3 +140,7 @@ docs/             system, project, and plan docs
 ## License
 
 MIT
+
+## Contributing
+
+Focused contributions are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).

@@ -1,32 +1,27 @@
 # Backlog
 
-Living list of future design gaps, tech debt, and better ways to do a thing noticed
-during normal execution. Fix simple, quick, or blocking issues inline; capture only
-durable follow-ups worth revisiting cold. Add an item only when it cannot be fixed inline
-and represents recurring friction, meaningful risk or cost, an unresolved decision, or a
-concrete trigger. This is not a release contract; `docs/project/ROADMAP.md` is the
-higher-bar shipped/in-progress view.
+Future-only gaps and opportunities worth revisiting. Capture recurring friction,
+meaningful risk or cost, unresolved decisions, or concrete revisit triggers.
+Fix simple, quick, or blocking issues inline when within the active task's scope.
 
-This repository is the canonical owner for its follow-ups; cross-repository work belongs
-with the repository that owns the capability, with links from affected repositories only
-when useful. Date and source volatile external or runtime claims, or label them a
-hypothesis.
+## Conventions
 
-Convention: each item has **What** (the friction), **Why or evidence**, and
-optionally **Next** (the smallest action that makes it actionable) or **Revisit
-when** (an intentional external or measurable gate). Default state is omitted; use
-**Revisit when** for gates and `State: blocked — <reason>` only when work is genuinely
-blocked externally.
-
-When an item ships, remove it from this doc and record it as a concise completed
-highlight in `docs/project/ROADMAP.md` instead of keeping a shipped note here.
-This file stays future-only.
-
-Review this file after a significant shipped slice or at least quarterly: confirm each
-item is still open, refresh dated evidence, promote selected work to a plan, convert it
-to a trigger, or move completed decisions and work to the Roadmap or decision history.
-
----
+- **Entry:** state **What** and **Why or evidence**. Add **Next** (a useful first
+  action) or **Revisit when** (a concrete gate) where helpful; no fixed template
+  is required.
+- **Evidence:** date and source volatile claims. Support causal or performance
+  claims with measurements, or label them **hypothesis, unmeasured**.
+- **Delegation:** agents can execute entries directly. Recording a candidate does
+  not expand the active task or select a roadmap priority. Use an issue when
+  persistent discussion or coordination helps; no mandatory graduation step.
+- **Ownership:** keep cross-repository work with the capability-owning repository.
+  If an issue owns the details, retain only a useful linked summary here; avoid
+  parallel checklists. Keep private evidence out of public entries and issues.
+- **Closure:** reconcile affected entries as work lands. Remove resolved concerns,
+  retain unresolved remainders, and preserve durable rationale in its owning
+  reference. Roadmap records selected direction; Git and PRs hold routine shipped
+  history. Revisit the broader list during prioritization or when stale entries
+  impede work.
 
 ## Open
 
@@ -38,10 +33,10 @@ to a trigger, or move completed decisions and work to the Roadmap or decision hi
 - **Why it matters**: The documented SSRF posture implies per-hop validation is
   sufficient; against an active DNS-rebinding attacker it is not. Inherent to
   Node's `fetch`, so this is a "known gap," not a quick patch.
-- **Next**: Either document the limitation explicitly in
-  `docs/system/ARCHITECTURE.md` security boundaries, or pin the connection to the
-  validated IP (custom `undici` dispatcher / `lookup` that returns the
-  already-validated address).
+- **Next**: Decide whether to pin the connection to the validated IP (for
+  example, with a custom dispatcher), then test that connection against a DNS
+  change. The limitation is already documented in
+  `docs/system/ARCHITECTURE.md`.
 
 ### Lazy stats computation
 - **What**: `processOne` always calls `computeStats(markdown)`, re-splitting and
@@ -57,3 +52,12 @@ to a trigger, or move completed decisions and work to the Roadmap or decision hi
   currently an implicit omission rather than a recorded decision.
 - **Next**: Either enforce a cap on rendered HTML length or add an explicit
   note to the security caveats in `docs/system/FEATURES.md` so it's a choice.
+
+### Performance baselines
+
+- **What**: establish a repeatable benchmark and useful regression thresholds for
+  the fetch/convert pipeline.
+- **Why or evidence**: the earlier Roadmap named this as planned work, but no
+  benchmark contract or threshold is selected here.
+- **Next**: choose representative local HTML and network cases, measure current
+  behavior, then set thresholds only where variance supports them.
