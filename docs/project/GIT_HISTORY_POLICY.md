@@ -29,11 +29,21 @@ Merge commits and rebase merges are both allowed; squash merges are disabled.
 - **Rebase merge.** Use when the PR's commits are clean and the linear history reads better without an extra merge node. Avoid if the PR's commits are noisy (WIP, fixups) — clean them up locally first.
 - **Authoring expectation.** Because squash is gone, individual PR commits land in `main`. Keep PR commit messages tidy: meaningful subjects, no WIP markers, no fixup chains. Squash or reword locally before opening the PR if needed.
 
-## Branch Protection Status
+## Branch Protection
 
-The GitHub branch API reported `main` as `protected: false` on 2026-09-26, so
-checks/reviews are enforced by team convention rather than branch protection.
-Re-query current protection before delivery.
+Verified 2026-10-11 with
+`gh api repos/davisbuilds/fetchmd/branches/main/protection`:
+`main` requires these GitHub Actions checks before merge:
+
+- `Release commit categories` (CI)
+- `Lint & dead code` (CI)
+- `Build & test` (CI)
+- `check` (Publication Hygiene)
+
+Branches need not be up to date with `main`, no reviews are required, and admins
+are not enforced. Required checks match job names, so rename a job and its entry
+in the protection rule together. `Workflow Security Audit` is path-filtered and
+deliberately not required: a required check that never runs blocks every merge.
 
 ## Branch Workflow
 
