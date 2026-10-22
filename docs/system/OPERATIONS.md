@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Node.js `>=22`
+- Node.js `>=22.13` (pnpm 11 requires it)
 - pnpm `>=10`
 
 ## Install
@@ -59,7 +59,7 @@ Jobs:
 - Lint/dead-code: `pnpm lint`, `pnpm test:dead-code`
 - Build/test: `pnpm build`, `pnpm test`
 
-CI uses Node.js 24 and installs pnpm via `pnpm/action-setup` (version derived from the `packageManager` field in `package.json`).
+CI uses Node.js 24.22.1 and installs pnpm via `pnpm/action-setup` (version derived from the `packageManager` field in `package.json`).
 Installs use `pnpm install --frozen-lockfile`. Build/test also checks that the
 package version, release manifest, newest changelog entry, and built CLI version agree.
 The commit category job tests its validator on every run; `pnpm check` also runs
