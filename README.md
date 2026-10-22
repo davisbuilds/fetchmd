@@ -13,7 +13,7 @@ webpages (or local HTML) into clean, token-efficient markdown for AI workflows. 
 env vars or secrets.
 
 Do this, in order:
-1. Install deps. Prereq: Node >= 22. Run `pnpm install` from the repo root. Clone
+1. Install deps. Prereq: Node >= 22.13. Run `pnpm install` from the repo root. Clone
    https://github.com/davisbuilds/fetchmd.git and cd in first if needed.
 2. Verify it builds and passes checks WITHOUT network: run `pnpm check`
    (lint + test + build — the e2e tests execute the built `dist/`), then
