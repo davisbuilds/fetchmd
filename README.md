@@ -43,7 +43,7 @@ Prefer to do it yourself? The manual steps are below.
 
 Requirements:
 
-- Node.js `>=22`
+- Node.js `>=22.13` (pnpm 11 requires it)
 - pnpm for development
 
 Use the published CLI:
