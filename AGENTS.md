@@ -44,6 +44,16 @@ These are policy/steering, not facts. Behavioral facts (limits, flags, security 
 
 ## Working Agreement
 
+- **Push back before building.** If a request is incoherent or self-contradictory, or a spec/plan is vague or skips key decisions, stop and interview me — ask clarifying questions and confirm intent before writing code or changing files. Don't guess at scope or comply silently. (Clear, well-scoped requests don't need this.)
+- **Log durable follow-ups in `BACKLOG.md`.** Capture consequential design gaps,
+  tech debt, and better approaches in `docs/project/BACKLOG.md`; fix small or
+  blocking issues inline. Keep entries future-only, with evidence and a next step
+  or revisit trigger; date/source volatile claims or label hypotheses. The
+  capability-owning repo holds cross-repo detail. Agents can work directly from
+  entries; use issues for discussion or coordination with one detailed owner.
+  Reconcile affected entries as work lands; update `ROADMAP.md` when selected
+  direction changes, not as a shipment log.
+- **Keep docs current.** Update the owning reference when a change makes its contract, boundary, procedure, or direction inaccurate. Routine internal changes need no ceremonial doc edit.
 - **Plan and hand off work.** Use the accepted conversation or task as the
   contract when it gives enough detail. Save a design, spec, or plan when it
   helps people coordinate, agree on acceptance criteria, or sequence execution.
@@ -53,16 +63,6 @@ These are policy/steering, not facts. Behavioral facts (limits, flags, security 
   Before retiring execution docs, preserve lasting decisions and open work in
   maintained references and repair incoming links.
   Archive reviewed completed execution docs in the ignored `docs/archive/`.
-- **Push back before building.** If a request is incoherent or self-contradictory, or a spec/plan is vague or skips key decisions, stop and interview me — ask clarifying questions and confirm intent before writing code or changing files. Don't guess at scope or comply silently. (Clear, well-scoped requests don't need this.)
-- **Keep docs current.** Update the owning reference when a change makes its contract, boundary, procedure, or direction inaccurate. Routine internal changes need no ceremonial doc edit.
 - **Commit logically.** Commit completed work in coherent chunks as you proceed. Push only when explicitly asked.
 - **Classify commits for releases.** Every non-merge commit uses a Conventional Commit subject; CI checks PR commits and the complete unreleased history on main pushes. See `docs/project/GIT_HISTORY_POLICY.md` for release categories and the pre-1.0 policy. Keep release notes in `CHANGELOG.md`, upcoming direction in the Roadmap, and actionable unresolved gaps in the Backlog.
-- **Log durable follow-ups in `BACKLOG.md`.** Capture consequential design gaps,
-  tech debt, and better approaches in `docs/project/BACKLOG.md`; fix small or
-  blocking issues inline. Keep entries future-only, with evidence and a next step
-  or revisit trigger; date/source volatile claims or label hypotheses. The
-  capability-owning repo holds cross-repo detail. Agents can work directly from
-  entries; use issues for discussion or coordination with one detailed owner.
-  Reconcile affected entries as work lands; update `ROADMAP.md` when selected
-  direction changes, not as a shipment log.
 - **Re-ground after compaction.** A compaction summary loses precise paths, context, and verification state — before continuing, re-read this project's `AGENTS.md`, its reference docs, and recent commits.
