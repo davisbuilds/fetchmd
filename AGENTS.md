@@ -54,15 +54,12 @@ These are policy/steering, not facts. Behavioral facts (limits, flags, security 
   Reconcile affected entries as work lands; update `ROADMAP.md` when selected
   direction changes, not as a shipment log.
 - **Keep docs current.** Update the owning reference when a change makes its contract, boundary, procedure, or direction inaccurate. Routine internal changes need no ceremonial doc edit.
-- **Plan and hand off work.** Use the accepted conversation or task as the
-  contract when it gives enough detail. Save a design, spec, or plan when it
-  helps people coordinate, agree on acceptance criteria, or sequence execution.
-  For unfinished work changing agents, sessions, or devices, leave a concise
-  handoff when the receiving context is incomplete. Commit audience-appropriate
-  documents needed for shared execution and keep their status current.
-  Before retiring execution docs, preserve lasting decisions and open work in
-  maintained references and repair incoming links.
-  Archive reviewed completed execution docs in the ignored `docs/archive/`.
+- **Plan and hand off work.** Reuse clear task context. Save planning docs when
+  decisions, acceptance, or coordination need persistence. Leave a brief
+  handoff only when needed to resume unfinished work. Commit shared docs and
+  keep status current. Before archiving reviewed, completed docs in ignored
+  `docs/archive/`, preserve lasting decisions and open work in maintained docs
+  and repair links.
 - **Commit logically.** Commit completed work in coherent chunks as you proceed. Push only when explicitly asked.
 - **Classify commits for releases.** Every non-merge commit uses a Conventional Commit subject; CI checks PR commits and the complete unreleased history on main pushes. See `docs/project/GIT_HISTORY_POLICY.md` for release categories and the pre-1.0 policy. Keep release notes in `CHANGELOG.md`, upcoming direction in the Roadmap, and actionable unresolved gaps in the Backlog.
 - **Re-ground after compaction.** A compaction summary loses precise paths, context, and verification state — before continuing, re-read this project's `AGENTS.md`, its reference docs, and recent commits.
