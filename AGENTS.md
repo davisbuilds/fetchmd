@@ -1,65 +1,82 @@
 # AGENTS.md
 
-`fetchmd` is a TypeScript/Node CLI that fetches or ingests HTML and converts it to clean, token-efficient markdown for AI workflows.
-
-Pipeline: parse input(s) → resolve HTML → extract primary content → convert to markdown → output (plain or JSON).
+`fetchmd` is a TypeScript/Node CLI that fetches or ingests HTML and converts it
+to clean, token-efficient markdown for AI workflows: parse input(s) → resolve
+HTML → extract primary content → convert to markdown → output (plain or JSON).
+`node dist/index.js --help` lists flags after `pnpm build`.
 
 ## Documentation Map
 
-- `CONTRIBUTING.md` — contribution scope, review expectations, and delivery policy.
-- `docs/system/ARCHITECTURE.md` — pipeline stages, runtime shape, module map, data flow (URL/render/file/stdin), error/exit behavior, security boundaries.
-- `docs/system/FEATURES.md` — full CLI surface and flags, input rules, JSON output schema, multi-input error handling, `--render` mode (Puppeteer behavior + security caveats), conversion behavior, operational limits, exit codes.
-- `docs/system/OPERATIONS.md` — prerequisites, install, daily commands, local CLI usage, testing notes (build-first for e2e), releases, `prepublishOnly` flow, troubleshooting matrix.
-- `CHANGELOG.md` — released consumer-facing changes, maintained by Release Please.
-- `docs/project/ROADMAP.md` — current direction and product boundaries.
-- `docs/project/GIT_HISTORY_POLICY.md` — merge-commit/rebase policy (squash disabled) and branch hygiene.
-- `docs/project/BACKLOG.md` — unresolved gaps and revisit conditions.
-- `skills/fetchmd/SKILL.md` — operator reference for using fetchmd as a tool inside agent workflows (install, invoke, parse output).
-
-## Command Quickstart
-
-```bash
-pnpm install
-pnpm check          # lint + build + test (matches prepublishOnly)
-node dist/index.js --help              # list all available commands/flags
-node dist/index.js https://example.com
-```
+- `CONTRIBUTING.md` — contribution scope, review expectations, and delivery.
+- `docs/system/ARCHITECTURE.md` — pipeline, module map, data flow, exit behavior, security boundaries.
+- `docs/system/FEATURES.md` — CLI surface, JSON output schema, `--render` mode, limits, exit codes.
+- `docs/system/OPERATIONS.md` — setup, commands, testing notes, releases, npm publication, troubleshooting.
+- `CHANGELOG.md` — released changes, maintained by Release Please.
+- `docs/project/ROADMAP.md`, `docs/project/BACKLOG.md`.
+- `docs/project/GIT_HISTORY_POLICY.md` — merge strategy and release categories.
+- `skills/fetchmd/SKILL.md` — operator reference for using fetchmd inside agent workflows.
 
 ## Implementation Guardrails
 
-These are policy/steering, not facts. Behavioral facts (limits, flags, security boundaries) live in the docs above.
+Policy, not facts; behavioral facts (limits, flags, boundaries) live in the docs above.
 
-- **HTTPS-only is a security posture, not a default.** Don't broaden allowed protocols without explicit security review.
-- **Resource limits (timeout, max bytes, redirect count) are part of the contract**, not optional tuning. Don't relax them to "make a request work" — fix the input or the caller.
-- **Redirect targets must keep passing `validateUrl()`.** Don't bypass per-hop validation in `src/fetch.ts`.
-- **Readability fallback warning is intentional.** When `extractContent()` falls back to full body, it warns to stderr — don't silence that warning to keep multi-input output clean.
-- **`--render` security model is asymmetric**: initial URL is SSRF-validated, but browser-internal redirects and sub-resources are not intercepted. Treat `--render` URLs as trusted input only.
+- **HTTPS-only is a security posture, not a default.** Don't broaden allowed
+  protocols without explicit security review.
+- **Resource limits (timeout, max bytes, redirect count) are part of the
+  contract.** Don't relax them to make a request work; fix the input or caller.
+- **Redirect targets must keep passing `validateUrl()`.** Don't bypass per-hop
+  validation in `src/fetch.ts`.
+- **The Readability fallback warning is intentional.** When `extractContent()`
+  falls back to the full body it warns on stderr; don't silence it to keep
+  multi-input output clean.
+- **`--render` is asymmetric:** the initial URL is SSRF-validated, but
+  browser-internal redirects and sub-resources are not. Treat `--render` URLs as
+  trusted input only.
 
 ## Testing
 
-- **Pre-push**: `pnpm check` (lint + build + test).
-- **TDD**: red/green for new features, major refactors, and large changes. The red step must fail for the behavior you're about to fix — a test that fails only because the symbol doesn't exist yet is a stub, not a red test; write the signature first, then a test that fails on the behavior. Skip the red step for code with no behavior to assert, and cover it after. For smaller edits, still run the relevant existing tests before wrapping up.
-- **E2E** (`test/**/*.test.ts`) executes `dist/index.js` — run `pnpm build` first in clean clones.
-- **Dead-code gate** (`src/dead-code.test.ts`): static checks for unreferenced exports and orphaned source files. It owns cross-file dead code; biome `recommended` owns within-file unused vars/imports and unreachable code. When an export is intentionally unreferenced (e.g. a public type required by the declaration-emitting build), add it to `EXPORT_EXCEPTIONS`/`FILE_EXCEPTIONS` with a reason rather than silencing the test.
+- **Local gate** (matches the required `Lint & dead code`, `Build & test`,
+  `Release commit categories`, and `check` checks):
+  `pnpm install --frozen-lockfile && pnpm check && python3 scripts/check_publication_hygiene.py`.
+  `pnpm check` runs lint, build, the Vitest suite (which includes the dead-code
+  gate), and the release-commit validator tests. CI also requires every non-merge
+  commit subject on the PR to be a Conventional Commit; there is no local command
+  for that check.
+- E2E tests (`test/**/*.test.ts`) execute `dist/index.js`; build first in a clean clone.
+- **Dead-code gate** (`src/dead-code.test.ts`) owns cross-file dead code; biome
+  `recommended` owns within-file unused code. For an intentionally unreferenced
+  export (for example a public type the declaration build needs), add it to
+  `EXPORT_EXCEPTIONS`/`FILE_EXCEPTIONS` with a reason rather than silencing the test.
 
 ## Working Agreement
 
-- **Push back before building.** If a request is incoherent or self-contradictory, or a spec/plan is vague or skips key decisions, stop and interview me — ask clarifying questions and confirm intent before writing code or changing files. Don't guess at scope or comply silently. (Clear, well-scoped requests don't need this.)
-- **Log durable follow-ups in `BACKLOG.md`.** Capture consequential design gaps,
-  tech debt, and better approaches in `docs/project/BACKLOG.md`; fix small or
-  blocking issues inline. Keep entries future-only, with evidence and a next step
-  or revisit trigger; date/source volatile claims or label hypotheses. The
-  capability-owning repo holds cross-repo detail. Agents can work directly from
-  entries; use issues for discussion or coordination with one detailed owner.
-  Reconcile affected entries as work lands; update `ROADMAP.md` when selected
-  direction changes, not as a shipment log.
-- **Keep docs current.** Update the owning reference when a change makes its contract, boundary, procedure, or direction inaccurate. Routine internal changes need no ceremonial doc edit.
+- **Clarify before building** when a request is vague, contradictory, or skips a
+  key decision; clear, well-scoped requests need no interview.
+- **Fix small issues now; backlog the rest.** Fix simple, quick, or blocking
+  issues in this repo as part of the current change and call them out. Record in
+  `docs/project/BACKLOG.md` only what can't be finished now or needs the
+  maintainer's decision; don't open a branch or PR just for a backlog entry.
+- **Keep docs current** when a change makes a documented contract, boundary,
+  procedure, or direction stale.
 - **Plan and hand off work.** Reuse clear task context. Save planning docs when
-  decisions, acceptance, or coordination need persistence. Leave a brief
-  handoff only when needed to resume unfinished work. Commit shared docs and
-  keep status current. Before archiving reviewed, completed docs in ignored
-  `docs/archive/`, preserve lasting decisions and open work in maintained docs
-  and repair links.
-- **Commit logically.** Commit completed work in coherent chunks as you proceed. Push only when explicitly asked.
-- **Classify commits for releases.** Every non-merge commit uses a Conventional Commit subject; CI checks PR commits and the complete unreleased history on main pushes. See `docs/project/GIT_HISTORY_POLICY.md` for release categories and the pre-1.0 policy. Keep release notes in `CHANGELOG.md`, upcoming direction in the Roadmap, and actionable unresolved gaps in the Backlog.
-- **Re-ground after compaction.** A compaction summary loses precise paths, context, and verification state — before continuing, re-read this project's `AGENTS.md`, its reference docs, and recent commits.
+  decisions, acceptance, or coordination need persistence, and leave a brief
+  handoff only when needed to resume unfinished work. Commit shared docs and keep
+  status current. `docs/archive/` is gitignored: before archiving a completed doc
+  there, preserve lasting decisions and open work in maintained docs and repair
+  links.
+- **TDD:** red/green for features, major refactors and large changes; the red
+  test must fail on the behavior, not on a missing symbol. For smaller edits, run
+  the relevant existing checks.
+- **Commit and push.** Commit coherent chunks, staging by explicit path. Push
+  your task branch and open a PR once the work is complete and the local gate
+  passes; don't push directly to `main`.
+- **Merge** only under the standing merge authority in the maintainer's workspace
+  instructions, or when the maintainer asks. Without those instructions in
+  context, leave the PR for the maintainer.
+- **History and releases.** Squash is disabled: merge commit by default, rebase
+  only when the branch's commits are already clean. Every non-merge commit uses a
+  Conventional Commit subject (categories in `GIT_HISTORY_POLICY.md`). Merging the
+  Release Please PR tags a GitHub Release; npm publication is a separate
+  maintainer action. Leave both to the maintainer.
+- **Re-ground after compaction** in source, this file, the owning docs, and
+  recent commits. A summary and your own earlier proposals are not user approval.
