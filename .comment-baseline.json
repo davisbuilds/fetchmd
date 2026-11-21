@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "exclude": [
+    "test/fixtures/**"
+  ],
+  "files": {
+    ".github/dependabot.yml": 3,
+    ".github/workflows/ci.yml": 1,
+    ".github/workflows/release-please.yml": 4,
+    ".github/workflows/zizmor.yml": 8,
+    "pnpm-workspace.yaml": 3,
+    "scripts/check_publication_hygiene.py": 4,
+    "scripts/release-commits.cjs": 3,
+    "src/cli.test.ts": 3,
+    "src/convert.test.ts": 1,
+    "src/convert.ts": 7,
+    "src/dead-code.test.ts": 3,
+    "src/extract.test.ts": 1,
+    "src/extract.ts": 1,
+    "src/fetch.test.ts": 3,
+    "src/fetch.ts": 12,
+    "src/index.ts": 1,
+    "src/input.ts": 1,
+    "src/pipeline.ts": 10,
+    "src/pool.ts": 3,
+    "src/render.test.ts": 8,
+    "src/render.ts": 3,
+    "src/security.ts": 17,
+    "test/e2e.test.ts": 5
+  }
+}

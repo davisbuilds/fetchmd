@@ -19,9 +19,13 @@ pnpm test
 pnpm test:dead-code
 pnpm build
 pnpm check
+python3 scripts/check_comments.py
 ```
 
 `pnpm check` runs lint, tests, and build. It is also the `prepublishOnly` gate.
+`scripts/check_comments.py` is a comment ratchet: it fails when a file gains
+disallowed comment lines over `.comment-baseline.json`, and asks for `--update`
+after comments are deleted.
 
 ## Local CLI Usage
 
@@ -56,7 +60,7 @@ Workflow: `.github/workflows/ci.yml`
 Jobs:
 
 - Release commit categories (PRs): checks every non-merge commit subject, including bot commits
-- Lint/dead-code: `pnpm lint`, `pnpm test:dead-code`
+- Lint/dead-code: `pnpm lint`, `pnpm test:dead-code`, `python3 scripts/check_comments.py`
 - Build/test: `pnpm build`, `pnpm test`
 
 CI uses Node.js 24.22.1 and installs pnpm via `pnpm/action-setup` (version derived from the `packageManager` field in `package.json`).
