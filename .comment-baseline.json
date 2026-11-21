@@ -13,7 +13,7 @@
     "scripts/release-commits.cjs": 3,
     "src/cli.test.ts": 3,
     "src/convert.test.ts": 1,
-    "src/convert.ts": 4,
+    "src/convert.ts": 7,
     "src/dead-code.test.ts": 3,
     "src/extract.test.ts": 1,
     "src/extract.ts": 1,
