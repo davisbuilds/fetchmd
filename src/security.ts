@@ -17,25 +17,21 @@ function isPrivateIPv4(ip: string): boolean {
   if (parts.length !== 4) return false;
   const [a, b] = parts;
 
-  // 0.0.0.0/8
+  // WHY: blocks 0.0.0.0/8, 10.0.0.0/8, 127.0.0.0/8, 169.254.0.0/16, 172.16.0.0/12,
+  // and 192.168.0.0/16.
   if (a === 0) return true;
-  // 10.0.0.0/8
   if (a === 10) return true;
-  // 127.0.0.0/8
   if (a === 127) return true;
-  // 169.254.0.0/16
   if (a === 169 && b === 254) return true;
-  // 172.16.0.0/12
   if (a === 172 && b >= 16 && b <= 31) return true;
-  // 192.168.0.0/16
   if (a === 192 && b === 168) return true;
 
   return false;
 }
 
-// Extract the embedded IPv4 from an IPv4-mapped/compatible IPv6 address
-// (e.g. "::ffff:127.0.0.1" or its hex-compressed form "::ffff:7f00:1").
-// Returns a dotted-quad string, or undefined if not a mapped address.
+// WHY: an IPv4-mapped/compatible IPv6 address can carry its IPv4 dotted
+// ("::ffff:127.0.0.1") or as two hex groups ("::ffff:7f00:1"); both must be
+// decoded so the IPv4 rules apply.
 function mappedIPv4(ip: string): string | undefined {
   const normalized = ip.toLowerCase();
   const prefix = normalized.startsWith("::ffff:")
@@ -46,9 +42,7 @@ function mappedIPv4(ip: string): string | undefined {
   if (!prefix) return undefined;
 
   const tail = normalized.slice(prefix.length);
-  // Dotted-quad tail: "::ffff:127.0.0.1"
   if (isIPv4(tail)) return tail;
-  // Hex tail: "::ffff:7f00:1" -> two 16-bit groups -> four octets
   const groups = tail.split(":");
   if (groups.length !== 2) return undefined;
   const octets: number[] = [];
@@ -62,14 +56,12 @@ function mappedIPv4(ip: string): string | undefined {
 
 function isPrivateIPv6(ip: string): boolean {
   const normalized = ip.toLowerCase();
-  // ::1 loopback
+  // WHY: ::1 is loopback; fc and fd prefixes are fc00::/7 unique local.
   if (normalized === "::1" || normalized === "0000:0000:0000:0000:0000:0000:0000:0001") return true;
-  // fc00::/7 (unique local)
   if (normalized.startsWith("fc") || normalized.startsWith("fd")) return true;
   // fe80::/10 (link-local)
   if (normalized.startsWith("fe80")) return true;
 
-  // IPv4-mapped/compatible addresses: check the embedded IPv4 against IPv4 rules
   const embedded = mappedIPv4(normalized);
   if (embedded && isPrivateIPv4(embedded)) return true;
 
@@ -104,7 +96,6 @@ export async function validateUrl(raw: string, options?: ValidateUrlOptions): Pr
     throw new SecurityError(`Hostname "${hostname}" is blocked.`);
   }
 
-  // If the hostname is already an IP, check it directly
   if (isIPv4(hostname) || isIPv6(hostname)) {
     if (isPrivateIP(hostname)) {
       throw new SecurityError(`Access to private IP address "${hostname}" is blocked.`);
@@ -112,7 +103,6 @@ export async function validateUrl(raw: string, options?: ValidateUrlOptions): Pr
     return url;
   }
 
-  // Resolve DNS and check the resolved IP
   const lookup = options?.dnsLookup ?? ((h: string) => dns.lookup(h));
   let resolved: { address: string };
   try {

@@ -1,6 +1,5 @@
-// Run an async mapper over items with bounded concurrency, preserving input
-// order in the returned array. The mapper is expected to encapsulate its own
-// error handling; a rejection from it aborts the whole run.
+// WHY: the mapper is expected to encapsulate its own error handling; a rejection
+// from it aborts the whole run.
 export async function mapWithConcurrency<T, R>(
   items: readonly T[],
   limit: number,

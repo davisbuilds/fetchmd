@@ -5,7 +5,7 @@ const require = createRequire(import.meta.url);
 const pkg = require("../package.json");
 
 const DEFAULT_TIMEOUT_MS = 15_000;
-const MAX_RESPONSE_BYTES = 5 * 1024 * 1024; // 5MB
+const MAX_RESPONSE_BYTES = 5 * 1024 * 1024;
 const MAX_REDIRECTS = 5;
 
 export class FetchError extends Error {
@@ -58,21 +58,19 @@ export async function fetchHtml(url: URL, options?: FetchOptions): Promise<strin
       clearTimeout(timer);
     }
 
-    // Handle redirects
     if (response.status >= 300 && response.status < 400) {
       const location = response.headers.get("location");
       if (!location) {
         throw new FetchError(`Redirect (${response.status}) with no Location header`);
       }
       const redirectUrl = new URL(location, currentUrl.href);
-      // Re-validate the redirect target through SSRF checks
+      // WHY: every hop is re-validated, since a public URL can redirect to a private one.
       currentUrl = await validateUrl(redirectUrl.href, {
         dnsLookup: options?.dnsLookup,
       });
       continue;
     }
 
-    // Handle HTTP errors
     if (!response.ok) {
       const messages: Record<number, string> = {
         401: "Authentication required",
@@ -84,13 +82,11 @@ export async function fetchHtml(url: URL, options?: FetchOptions): Promise<strin
       throw new FetchError(msg, response.status);
     }
 
-    // Validate content type
     const contentType = response.headers.get("content-type") ?? "";
     if (!contentType.includes("text/html") && !contentType.includes("application/xhtml+xml")) {
       throw new FetchError(`Expected HTML content but got "${contentType}"`);
     }
 
-    // Read body with size limit
     if (!response.body) {
       throw new FetchError("Response has no body");
     }
@@ -120,21 +116,18 @@ export async function fetchHtml(url: URL, options?: FetchOptions): Promise<strin
   throw new FetchError(`Too many redirects (>${maxRedirects})`);
 }
 
-// Extract a charset label from a Content-Type header value, if present.
 function parseCharset(contentType: string): string | undefined {
   return /charset=["']?([^;"'\s]+)/i.exec(contentType)?.[1];
 }
 
-// Sniff a `<meta charset>` / `<meta http-equiv=content-type>` declaration from
-// the start of the document (ASCII-safe latin1 read) for pages that omit the
-// header charset.
+// WHY: some pages omit the header charset. latin1 reads the head ASCII-safely
+// while sniffing `<meta charset>` or `<meta http-equiv=content-type>`.
 function sniffMetaCharset(buffer: Buffer): string | undefined {
   const head = buffer.subarray(0, 1024).toString("latin1");
   return /<meta[^>]+charset=["']?([^"'>\s;]+)/i.exec(head)?.[1];
 }
 
-// Decode bytes with the resolved charset, falling back to UTF-8 when the label
-// is unknown to the runtime's TextDecoder.
+// WHY: fall back to UTF-8 when the label is unknown to the runtime's TextDecoder.
 function decodeBuffer(buffer: Buffer, charset: string): string {
   try {
     return new TextDecoder(charset).decode(buffer);

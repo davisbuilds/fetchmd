@@ -1,10 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createBrowser, RenderError, renderHtml } from "./render.js";
 
-// Mock puppeteer module
 vi.mock("puppeteer", () => {
   return {
-    default: undefined, // will be overridden per test
+    default: undefined, // WHY: each test overrides it
   };
 });
 
@@ -25,12 +24,11 @@ function createMockBrowser(page = createMockPage()) {
 
 describe("loadPuppeteer", () => {
   it("throws RenderError with install instructions when puppeteer is not available", async () => {
-    // Override the dynamic import to fail
     vi.doMock("puppeteer", () => {
       throw new Error("Cannot find module 'puppeteer'");
     });
 
-    // Re-import to pick up the mock
+    // WHY: vi.doMock only applies to imports made after it, so re-import.
     const { loadPuppeteer: load } = await import("./render.js");
     await expect(load()).rejects.toThrow(RenderError);
     await expect(load()).rejects.toThrow("pnpm add -D puppeteer");
@@ -88,8 +86,8 @@ describe("renderHtml", () => {
   });
 
   it("falls back to partial content on a TimeoutError (by error name) and reports via onWarn", async () => {
-    // Puppeteer throws a named TimeoutError; the detection keys off the name,
-    // not the message text (which varies across versions/locales).
+    // WHY: the detection keys off the TimeoutError name, not the message text
+    // (which varies across versions/locales).
     const timeoutErr = new Error("Waiting failed: 30000ms exceeded");
     timeoutErr.name = "TimeoutError";
     mockPage.goto.mockRejectedValue(timeoutErr);
@@ -106,8 +104,6 @@ describe("renderHtml", () => {
   });
 
   it("does not treat a non-timeout error as a timeout even if its message mentions 'timeout'", async () => {
-    // A connection error whose message coincidentally contains "timeout" must
-    // not trigger the partial-content fallback.
     mockPage.goto.mockRejectedValue(new Error("net::ERR_CONNECTION_REFUSED (timeout)"));
     mockPage.content.mockResolvedValue("<html><body>partial</body></html>");
     const warnings: string[] = [];

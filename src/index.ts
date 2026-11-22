@@ -2,7 +2,7 @@
 
 import { run } from "./pipeline.js";
 
-// Handle EPIPE gracefully (e.g., piping to `head`)
+// WHY: exit quietly when a reader such as `head` closes the pipe early.
 process.stdout.on("error", (err) => {
   if ((err as NodeJS.ErrnoException).code === "EPIPE") {
     process.exit(0);

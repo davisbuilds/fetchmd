@@ -12,7 +12,6 @@ function createTurndown(): TurndownService {
 
   td.use(gfm);
 
-  // Strip empty links
   td.addRule("stripEmptyLinks", {
     filter: (node) => {
       return node.nodeName === "A" && (!node.getAttribute("href") || !node.textContent?.trim());
@@ -20,7 +19,6 @@ function createTurndown(): TurndownService {
     replacement: () => "",
   });
 
-  // Strip decorative/tracking images
   td.addRule("stripTrackingImages", {
     filter: (node) => {
       if (node.nodeName !== "IMG") return false;
@@ -34,7 +32,6 @@ function createTurndown(): TurndownService {
     replacement: () => "",
   });
 
-  // Preserve language hint on fenced code blocks
   td.addRule("fencedCodeWithLang", {
     filter: (node) => {
       return (
@@ -56,18 +53,16 @@ function createTurndown(): TurndownService {
 
 function postProcess(md: string): string {
   return `${md
-    // Trim trailing whitespace from each line (must run before blank line collapse)
+    // WHY: the trailing-whitespace trim must run before the blank-line collapse.
     .replace(/[^\S\n]+$/gm, "")
-    // Collapse 3+ consecutive blank lines to 2
     .replace(/\n{3,}/g, "\n\n")
-    // Ensure single trailing newline
     .trimEnd()}\n`;
 }
 
 let service: TurndownService | undefined;
 
 export function toMarkdown(html: string): string {
-  // The service is stateless across calls and reusable, so build it once.
+  // WHY: the service is stateless across calls and reusable, so build it once.
   service ??= createTurndown();
   const raw = service.turndown(html);
   return postProcess(raw);
