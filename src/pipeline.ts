@@ -8,9 +8,8 @@ import { mapWithConcurrency } from "./pool.js";
 import { createBrowser, loadPuppeteer } from "./render.js";
 import { computeStats, formatStats, type Stats } from "./stats.js";
 
-// Max inputs processed in parallel. Bounds fan-out against target servers and
-// (in --render mode) concurrent browser pages while still overlapping network
-// waits for the common multi-URL case.
+// WHY: bounds fan-out against target servers and (in --render mode) concurrent
+// browser pages while still overlapping network waits for the common multi-URL case.
 const CONCURRENCY = 5;
 
 type Settled = { ok: true; result: ResultRecord } | { ok: false; source: string; message: string };
@@ -42,8 +41,8 @@ async function processOne(
   inputOpts: InputOptions,
 ): Promise<ResultRecord> {
   const source = sourceLabel(input);
-  // Collect warnings per input so the pipeline can emit them in order (rather
-  // than racing to process.stderr under concurrency).
+  // WHY: collect warnings per input so the pipeline can emit them in order rather
+  // than racing to process.stderr under concurrency.
   const warnings: string[] = [];
   const onWarn = (message: string) => warnings.push(message);
 
@@ -83,7 +82,6 @@ export async function run(
     render,
   };
 
-  // Launch browser if --render is active and there are URL inputs
   let browser: Browser | undefined;
   if (render && inputs.some((i) => i.mode === "url")) {
     const puppeteer = await loadPuppeteer();
@@ -95,8 +93,8 @@ export async function run(
   let hasErrors = false;
 
   try {
-    // Process inputs with bounded concurrency; each task captures its own
-    // failure so the pool never rejects and ordering is preserved.
+    // WHY: each task captures its own failure so the pool never rejects and
+    // ordering is preserved.
     const settled = await mapWithConcurrency<InputMode, Settled>(
       inputs,
       CONCURRENCY,
@@ -110,8 +108,6 @@ export async function run(
       },
     );
 
-    // Emit results, warnings, and errors in original input order for
-    // deterministic output.
     const multiInput = inputs.length > 1;
     for (const outcome of settled) {
       if (outcome.ok) {

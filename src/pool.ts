@@ -1,6 +1,4 @@
-// Run an async mapper over items with bounded concurrency, preserving input
-// order in the returned array. The mapper is expected to encapsulate its own
-// error handling; a rejection from it aborts the whole run.
+/** Runs a bounded mapper in input order. A mapper rejection rejects the pool. */
 export async function mapWithConcurrency<T, R>(
   items: readonly T[],
   limit: number,

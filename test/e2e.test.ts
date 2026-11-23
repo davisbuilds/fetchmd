@@ -92,7 +92,6 @@ describe("e2e: --raw mode", () => {
     const { stdout, code } = await run(["--raw", "--file", `${FIXTURES}/blog-article.html`]);
     expect(code).toBe(0);
     expect(stdout).toContain("How to Build a CLI Tool");
-    // Raw mode preserves nav/footer content that Readability strips
     expect(stdout).toContain("Home");
     expect(stdout).toContain("All rights reserved");
   });
@@ -202,7 +201,7 @@ describe("e2e: multi-input mode", () => {
       "--file", `${FIXTURES}/spa-shell.html`,
     ]);
     expect(code).toBe(0);
-    // spa-shell has no article structure, so it falls back and warns; the
+    // WHY: spa-shell has no article structure, so it falls back and warns; the
     // warning is labelled with the source in multi-input mode.
     expect(stderr).toContain("spa-shell.html: Warning: readability");
   });
@@ -261,8 +260,6 @@ describe("e2e: --render mode", () => {
       `${FIXTURES}/spa-shell.html`,
     ]);
     expect(code).toBe(0);
-    // File mode does not run JS, so Readability will try to extract what's in the static HTML
-    // The script-rendered content won't be present
     expect(stdout).not.toContain("Dynamic Content");
   });
 });

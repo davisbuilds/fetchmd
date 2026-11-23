@@ -52,9 +52,8 @@ export async function renderHtml(
         timeout: timeoutMs,
       });
     } catch (err) {
-      // On timeout, try to grab partial content. Puppeteer throws a named
-      // TimeoutError; key off the name rather than the (version/locale-dependent)
-      // message text.
+      // WHY: on timeout, keep partial content. Key off the TimeoutError name rather
+      // than the version- and locale-dependent message text.
       if (err instanceof Error && err.name === "TimeoutError") {
         const partial = await page.content();
         if (partial && partial.trim().length > 0) {

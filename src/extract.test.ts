@@ -27,7 +27,7 @@ describe("extractContent", () => {
 
   it("reports the readability fallback via onWarn instead of stderr", () => {
     const warnings: string[] = [];
-    // The SPA shell has no article structure, forcing the full-body fallback.
+    // WHY: the SPA shell has no article structure, forcing the full-body fallback.
     extractContent(fixture("spa-shell.html"), undefined, (m) => warnings.push(m));
     expect(warnings).toContainEqual(expect.stringContaining("readability"));
   });

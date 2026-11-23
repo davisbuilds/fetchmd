@@ -48,9 +48,6 @@ describe("parseArgs", () => {
   });
 
   it("errors when stdin combined with URL", () => {
-    // stdin is only added when no explicit inputs and !isTTY
-    // This scenario can't happen naturally since stdin is auto-detected
-    // But verify stdin exclusivity through the parseArgs logic
     const result = parseArgs([...node, "https://example.com"], false);
     expect(result.inputs).toEqual([{ mode: "url", value: "https://example.com" }]);
   });

@@ -10,7 +10,7 @@ const SEARCH_ROOTS = [path.join(ROOT, "src"), path.join(ROOT, "test")];
 const SKIP_DIRS = new Set(["node_modules", ".git", "dist", "docs", "skills"]);
 
 const EXPORT_EXCEPTIONS = new Set<string>([
-  // Public type surface: each is the return/option type of an exported function,
+  // WHY: public type surface. Each is the return/option type of an exported function,
   // so its `export` is required by the declaration-emitting build (tsc
   // `declaration: true`) even though no module imports it by name.
   "src/cli.ts::CliResult",

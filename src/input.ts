@@ -5,7 +5,7 @@ import { type FetchOptions, fetchHtml } from "./fetch.js";
 import { type RenderOptions, renderHtml } from "./render.js";
 import { type ValidateUrlOptions, validateUrl } from "./security.js";
 
-const MAX_INPUT_BYTES = 5 * 1024 * 1024; // 5MB
+const MAX_INPUT_BYTES = 5 * 1024 * 1024;
 
 export interface InputOptions {
   fetch?: typeof globalThis.fetch;

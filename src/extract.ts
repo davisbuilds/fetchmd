@@ -30,7 +30,6 @@ export function extractContent(
     };
   }
 
-  // Fallback: use body content
   const body = doc.body;
   if (!body?.innerHTML.trim()) {
     throw new Error("No extractable content found in HTML.");

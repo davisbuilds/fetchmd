@@ -38,6 +38,22 @@ Fix simple, quick, or blocking issues inline when within the active task's scope
   change. The limitation is already documented in
   `docs/system/ARCHITECTURE.md`.
 
+### IPv6 SSRF ranges the private-IP check misses
+- **What**: `isPrivateIPv6` in `src/security.ts` checks `startsWith("fe80")`
+  for link-local, which covers only `fe80::/16` of `fe80::/10`. It has no case for
+  the unspecified address `::`. On 2026-11-21, `validateUrl()` accepted
+  `https://[fe90::1]/`, `https://[febf::1]/`, and `https://[::]/`. Connecting to
+  `::` reaches the local host on common stacks. Deprecated site-local
+  `fec0::/10` and NAT64 `64:ff9b::/96` (which embeds an IPv4 address) also pass.
+  On the IPv4 side, `isPrivateIPv4` does not block shared address space
+  `100.64.0.0/10`.
+- **Why it matters**: `docs/system/ARCHITECTURE.md` says link-local and IPv6
+  local ranges are blocked. The `fe80::/10` comment next to the check states the
+  intended range; the code drifted from it.
+- **Next**: match `fe8`–`feb` (e.g. `/^fe[89ab]/`), block `::` and its
+  expanded form, decide on `fec0::/10`, NAT64, and `100.64.0.0/10`, and add
+  `security.test.ts` cases for each boundary.
+
 ### Lazy stats computation
 - **What**: `processOne` always calls `computeStats(markdown)`, re-splitting and
   re-measuring the whole output even when neither `--stats` nor `--json` is set.
@@ -61,3 +77,15 @@ Fix simple, quick, or blocking issues inline when within the active task's scope
   benchmark contract or threshold is selected here.
 - **Next**: choose representative local HTML and network cases, measure current
   behavior, then set thresholds only where variance supports them.
+
+### Misnamed stdin-exclusivity test and its unreachable guard
+- **What**: the `parseArgs` test named "errors when stdin combined with URL"
+  (`src/cli.test.ts`) asserts that an explicit URL wins over piped stdin. Nothing
+  errors. `parseArgs` in `src/cli.ts` only adds stdin when there are no explicit
+  inputs, so its "stdin cannot be combined" error is unreachable from argv.
+- **Why it matters**: the test name claims coverage of an error path that no
+  test, and no input, exercises. The comment that admitted this was removed in
+  the comment sweep.
+- **Next**: rename the test to describe what it pins (explicit inputs take
+  precedence over piped stdin), and either delete the unreachable guard or keep
+  it as a defensive invariant with a direct test.
