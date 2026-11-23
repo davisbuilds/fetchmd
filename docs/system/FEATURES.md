@@ -6,7 +6,7 @@
 - Support multiple input modes:
   - One or more URL positional arguments
   - One or more `--file <path>` local HTML inputs (repeatable)
-  - stdin pipe input (single-input only, cannot combine with URL/file)
+  - Piped stdin when the command has no explicit inputs
 - Extract main content (article-first) before conversion
 - Preserve developer-relevant markdown structures (tables, fenced code blocks, lists)
 - Work in Unix pipelines (`stdout` output, `stderr` errors)
@@ -33,7 +33,9 @@ curl -s https://example.com | fetchmd
 
 ## Input Rules
 
-Multiple URL arguments and `--file` flags can be combined freely. Stdin is auto-detected when no explicit inputs are provided and the terminal is not a TTY. Stdin cannot be combined with URL or file inputs.
+Multiple URL arguments and `--file` flags can be combined freely. If stdin is
+piped alongside explicit inputs, Fetchmd processes the explicit inputs. Stdin
+is the input when the command has no explicit inputs and stdin is not a TTY.
 
 When multiple inputs are provided:
 - **Plain mode**: results are concatenated with `<!-- source: ... -->` comments, H2 source headings, and `---` separators

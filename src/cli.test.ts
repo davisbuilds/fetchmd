@@ -47,7 +47,7 @@ describe("parseArgs", () => {
     expect(() => parseArgs([...node], true)).toThrow();
   });
 
-  it("errors when stdin combined with URL", () => {
+  it("uses the explicit URL when stdin is piped", () => {
     const result = parseArgs([...node, "https://example.com"], false);
     expect(result.inputs).toEqual([{ mode: "url", value: "https://example.com" }]);
   });
