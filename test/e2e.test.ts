@@ -85,6 +85,14 @@ describe("e2e: stdin mode", () => {
     expect(code).not.toBe(0);
     expect(stderr).toBeTruthy();
   });
+
+  it("uses the explicit file when stdin is piped", async () => {
+    const html = "<html><body><h1>Piped input marker</h1></body></html>";
+    const { stdout, code } = await run(["--file", `${FIXTURES}/docs-page.html`], html);
+    expect(code).toBe(0);
+    expect(stdout).toContain("# API Reference");
+    expect(stdout).not.toContain("Piped input marker");
+  });
 });
 
 describe("e2e: --raw mode", () => {

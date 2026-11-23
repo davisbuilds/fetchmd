@@ -71,11 +71,6 @@ export function parseArgs(argv: string[], isTTY: boolean): CliResult {
     program.error("Error: No input provided. Pass a URL, use --file, or pipe HTML via stdin.");
   }
 
-  const hasStdin = inputs.some((i) => i.mode === "stdin");
-  if (hasStdin && inputs.length > 1) {
-    program.error("Error: stdin cannot be combined with URL or --file inputs.");
-  }
-
   return {
     inputs,
     raw: !!program.opts().raw,

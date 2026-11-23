@@ -77,15 +77,3 @@ Fix simple, quick, or blocking issues inline when within the active task's scope
   benchmark contract or threshold is selected here.
 - **Next**: choose representative local HTML and network cases, measure current
   behavior, then set thresholds only where variance supports them.
-
-### Misnamed stdin-exclusivity test and its unreachable guard
-- **What**: the `parseArgs` test named "errors when stdin combined with URL"
-  (`src/cli.test.ts`) asserts that an explicit URL wins over piped stdin. Nothing
-  errors. `parseArgs` in `src/cli.ts` only adds stdin when there are no explicit
-  inputs, so its "stdin cannot be combined" error is unreachable from argv.
-- **Why it matters**: the test name claims coverage of an error path that no
-  test, and no input, exercises. The comment that admitted this was removed in
-  the comment sweep.
-- **Next**: rename the test to describe what it pins (explicit inputs take
-  precedence over piped stdin), and either delete the unreachable guard or keep
-  it as a defensive invariant with a direct test.
