@@ -3,7 +3,7 @@ import { createBrowser, RenderError, renderHtml } from "./render.js";
 
 vi.mock("puppeteer", () => {
   return {
-    default: undefined, // WHY: each test overrides it
+    default: undefined,
   };
 });
 
@@ -86,8 +86,6 @@ describe("renderHtml", () => {
   });
 
   it("falls back to partial content on a TimeoutError (by error name) and reports via onWarn", async () => {
-    // WHY: the detection keys off the TimeoutError name, not the message text
-    // (which varies across versions/locales).
     const timeoutErr = new Error("Waiting failed: 30000ms exceeded");
     timeoutErr.name = "TimeoutError";
     mockPage.goto.mockRejectedValue(timeoutErr);

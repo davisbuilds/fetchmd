@@ -17,8 +17,6 @@ function isPrivateIPv4(ip: string): boolean {
   if (parts.length !== 4) return false;
   const [a, b] = parts;
 
-  // WHY: blocks 0.0.0.0/8, 10.0.0.0/8, 127.0.0.0/8, 169.254.0.0/16, 172.16.0.0/12,
-  // and 192.168.0.0/16.
   if (a === 0) return true;
   if (a === 10) return true;
   if (a === 127) return true;
@@ -56,7 +54,6 @@ function mappedIPv4(ip: string): string | undefined {
 
 function isPrivateIPv6(ip: string): boolean {
   const normalized = ip.toLowerCase();
-  // WHY: ::1 is loopback; fc and fd prefixes are fc00::/7 unique local.
   if (normalized === "::1" || normalized === "0000:0000:0000:0000:0000:0000:0000:0001") return true;
   if (normalized.startsWith("fc") || normalized.startsWith("fd")) return true;
   // fe80::/10 (link-local)

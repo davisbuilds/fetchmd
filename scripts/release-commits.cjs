@@ -2,7 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync, spawnSync } = require('node:child_process');
 
-// WHY: follows the SemVer 2.0.0 grammar: https://semver.org/#backusnaur-form-grammar-for-valid-semver-versions
+// WHY: follow the published grammar so tag validation matches Release Please: https://semver.org/#backusnaur-form-grammar-for-valid-semver-versions
 const numeric = '(?:0|[1-9][0-9]*)';
 const prerelease = `(?:${numeric}|[0-9]*[A-Za-z-][0-9A-Za-z-]*)`;
 const build = '[0-9A-Za-z-]+';
@@ -57,7 +57,7 @@ async function commitsForEvent(context, github, cwd = process.cwd()) {
     throw new Error('A real release tag or configured bootstrap commit is required.');
   }
   git('merge-base', '--is-ancestor', baseline, after);
-  // WHY: check the entire unreleased window, including earlier failed main pushes.
+  // WHY: a later push must still detect invalid commits from an earlier failed run.
   const records = git('log', '--format=%H%x00%P%x00%s%x00', `${baseline}..${after}`);
   if (!records) return [];
   const fields = records.split('\0');

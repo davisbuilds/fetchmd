@@ -92,7 +92,6 @@ describe("e2e: --raw mode", () => {
     const { stdout, code } = await run(["--raw", "--file", `${FIXTURES}/blog-article.html`]);
     expect(code).toBe(0);
     expect(stdout).toContain("How to Build a CLI Tool");
-    // WHY: raw mode preserves nav/footer content that Readability strips.
     expect(stdout).toContain("Home");
     expect(stdout).toContain("All rights reserved");
   });
@@ -261,7 +260,6 @@ describe("e2e: --render mode", () => {
       `${FIXTURES}/spa-shell.html`,
     ]);
     expect(code).toBe(0);
-    // WHY: file mode does not run JS, so script-rendered content is absent.
     expect(stdout).not.toContain("Dynamic Content");
   });
 });

@@ -53,7 +53,7 @@ function createTurndown(): TurndownService {
 
 function postProcess(md: string): string {
   return `${md
-    // WHY: the trailing-whitespace trim must run before the blank-line collapse.
+    // WHY: whitespace-only lines must become empty before the newline matcher can collapse them.
     .replace(/[^\S\n]+$/gm, "")
     .replace(/\n{3,}/g, "\n\n")
     .trimEnd()}\n`;

@@ -127,7 +127,7 @@ function sniffMetaCharset(buffer: Buffer): string | undefined {
   return /<meta[^>]+charset=["']?([^"'>\s;]+)/i.exec(head)?.[1];
 }
 
-// WHY: fall back to UTF-8 when the label is unknown to the runtime's TextDecoder.
+// WHY: an unsupported charset label should still yield readable text when the bytes are UTF-8.
 function decodeBuffer(buffer: Buffer, charset: string): string {
   try {
     return new TextDecoder(charset).decode(buffer);

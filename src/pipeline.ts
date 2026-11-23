@@ -108,7 +108,6 @@ export async function run(
       },
     );
 
-    // WHY: emit in original input order so output is deterministic.
     const multiInput = inputs.length > 1;
     for (const outcome of settled) {
       if (outcome.ok) {
